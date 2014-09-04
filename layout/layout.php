@@ -3,40 +3,74 @@
 namespace Layout;
 
 class Layout{
-	private $version;
-	private $body;
-	private $title;
+	private $strVersion;
+	private $strBody;
+	private $strTitle;
+	private $arrCssFiles;
+	private $arrJavascriptFiles;
 	
-	public function __construct($version = 'strict'){
-		$this->SetVersion($version);
+	public function __construct($strVersion = 'strict'){
+		$this->SetVersion($strVersion);
+		$this->SetCssFiles();
+		$this->SetJavascriptFiles();
 	}
 	
-	private function SetVersion($version){
-		switch($version){
+	private function SetVersion($strVersion){
+		switch($strVersion){
 			case 'html5':
-				$this->version = 'html5';
+				$this->strVersion = 'html5';
 				break;
 			case 'transitional':
-				$this->version = 'transitional';
+				$this->strVersion = 'transitional';
 				break;
 			default:
-				$this->version = 'strict';
+				$this->strVersion = 'strict';
 				break;
 		}
 	}
 	
-	public function RenderLayout($body, $title){
-		if($body === null){
+	private function SetCssFiles(){
+		$this->arrCssFiles = array(
+			'style.css'
+		);
+	}
+	
+	private function SetJavascriptFiles(){
+		$this->arrJavascriptFiles = array(
+			'jquery-1.11.1.min.js',
+			'app.js'
+		);
+	}
+	
+	private function RenderCssTags(){
+		$strCssTags = '';
+		foreach($this->arrCssFiles as $strCssFileName){
+			$strCssTags .= '<link href="' . \Config::$strCssDir . $strCssFileName . '" media="all" rel="stylesheet" type="text/css" />' . "\n";
+		}
+		return $strCssTags;
+	}
+	
+	private function RenderJavascriptTags(){
+		$strJavascriptTags = '';
+		foreach($this->arrJavascriptFiles as $strJavascriptFileName){
+			$strJavascriptTags .= '<script src="' . \Config::$strJavascriptDir . $strJavascriptFileName . '" type="text/javascript"></script>' . "\n";
+		}
+		return $strJavascriptTags;
+		
+	}
+	
+	public function RenderLayout($strBody, $strTitle){
+		if($strBody === null){
 			throw new Exeption('HTML-body can not be null.');
 		}
-		if($title === null){
+		if($strTitle === null){
 			throw new Exeption('Title can not be null');
 		}
 		
-		$this->body = $body;
-		$this->title = $title;
+		$this->strBody = $strBody;
+		$this->strTitle = $strTitle;
 		
-		switch($this->version){
+		switch($this->strVersion){
 			case 'html5':
 				$html = $this->BuildHTML5();;
 				break;
@@ -55,11 +89,13 @@ class Layout{
 		$strict =  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
 <html xmlns="http://www.w3.org/1999/xhtml"> 
 	<head> 
-		<title>' . $this->title . '</title> 
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" /> 
+		<title>' . $this->strTitle . '</title> 
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		' . $this->RenderCssTags() . '
 	</head> 
 	<body>
-		' . $this->body . '
+		' . $this->strBody . '
+		' . $this->RenderJavascriptTags() . '
 	</body>
 </html>';
 		
@@ -71,10 +107,12 @@ class Layout{
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>' . $this->title . '</title>
+	<title>' . $this->strTitle . '</title>
+	' . $this->RenderCssTags() . '
 </head>
 <body>
-	' . $this->body . '
+	' . $this->strBody . '
+	' . $this->RenderJavascriptTags() . '
 </body>
 </html>';
 
@@ -85,11 +123,13 @@ class Layout{
 		$html5 = '<!doctype html>
 <html id="body">
 	<head>
-		<title>' . $this->title . '</title>
+		<title>' . $this->strTitle . '</title>
 		<meta charset="utf-8">
+		' . $this->RenderCssTags() . '
 	</head>
 	<body>
-		' . $this->body . '
+		' . $this->strBody . '
+		' . $this->RenderJavascriptTags() . '
 	</body>
 </html>';
 		

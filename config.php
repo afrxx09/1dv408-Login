@@ -1,8 +1,8 @@
 <?php
 
 /*
-* Loads class files automaticly
-* Inspiration from: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
+*	Loads class files automaticly
+*	Inspiration from: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
 */
 function AutoLoadClasses($class){
 	$class = ltrim($class, '\\');
@@ -25,12 +25,17 @@ function AutoLoadClasses($class){
 
 spl_autoload_register('AutoLoadClasses');
 
+/*
+*	Generic Configuration class with static attributes and methods for applicationwide access.
+*/
 class Config{
-	public static $strViewDir = '/app/views/';
-	public static $strHelperDir = '/app/helpers/';
-	public static $strControllerDir = '/app/controllers/';
-	public static $strModelDir = '/app/models/';
-	public static $strLayoutDir = '/layout/';
+	public static $strCssDir = 'layout/css/';
+	public static $strJavascriptDir = 'layout/javascript/';
+	public static $strViewDir = 'app/views/';
+	public static $strHelperDir = 'app/helpers/';
+	public static $strControllerDir = 'app/controllers/';
+	public static $strModelDir = 'app/models/';
+	public static $strLayoutDir = 'layout/';
 	
 	public static function GetClassPath($strNamespace){
 		$strReturn = '';
