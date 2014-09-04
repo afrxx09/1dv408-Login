@@ -61,10 +61,10 @@ class Layout{
 	
 	public function RenderLayout($strBody, $strTitle){
 		if($strBody === null){
-			throw new Exeption('HTML-body can not be null.');
+			throw new \Exception('HTML-body can not be null.');
 		}
 		if($strTitle === null){
-			throw new Exeption('Title can not be null');
+			throw new \Exception('Title can not be null');
 		}
 		
 		$this->strBody = $strBody;

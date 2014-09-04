@@ -17,10 +17,13 @@ function AutoLoadClasses($class){
 	else{
 		$strClassName = strToLower($class);
 	}
-	$strDirPath = Config::GetClassPath($strNamespace);
+	$strDirPath = Config::GetNamespacePath($strNamespace);
 	$strFilePath = $strDirPath . $strClassName . '.php';
+	if(file_exists($strFilePath)){
+		require_once($strFilePath);
+		//throw new \Exception('Could not require file: "' . $strFilePath . '". File does not exsist.');
+	}
 	
-	require_once($strFilePath);
 }
 
 spl_autoload_register('AutoLoadClasses');
@@ -29,6 +32,8 @@ spl_autoload_register('AutoLoadClasses');
 *	Generic Configuration class with static attributes and methods for applicationwide access.
 */
 class Config{
+	public static $boolInDev = true;
+	
 	public static $strCssDir = 'layout/css/';
 	public static $strJavascriptDir = 'layout/javascript/';
 	public static $strViewDir = 'app/views/';
@@ -37,7 +42,7 @@ class Config{
 	public static $strModelDir = 'app/models/';
 	public static $strLayoutDir = 'layout/';
 	
-	public static function GetClassPath($strNamespace){
+	public static function GetNamespacePath($strNamespace){
 		$strReturn = '';
 		switch($strNamespace){
 			case 'view':
@@ -56,7 +61,7 @@ class Config{
 				$strReturn = self::$strLayoutDir;
 				break;
 			default:
-				$strReturn = '/';
+				$strReturn = '';
 				break;
 		}
 		return $strReturn;
