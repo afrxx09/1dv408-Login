@@ -8,8 +8,9 @@ class Controller{
 	protected $model;
 	protected $helper;
 	
+	protected $strDefaultAction = 'Index';
+	
 	public function __construct(){
-		
 		$r = new \ReflectionClass($this);
 		$s = $r->GetShortName();
 		
@@ -22,8 +23,8 @@ class Controller{
 		$this->view = new $strView($this->model, $this->helper);
 	}
 	
-	public function RunAction($a, $q){
-		return $this->$a($q);
+	public function GetDefaultAction(){
+		return $this->strDefaultAction;
 	}
 	
 }

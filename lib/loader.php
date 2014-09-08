@@ -1,6 +1,6 @@
 <?php
 /*
-*	Loads class files automaticly
+*	Loads class files automaticly with help of namespaces
 *	Inspiration from: https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-0.md
 */
 function AutoLoadClasses($class){
@@ -16,8 +16,6 @@ function AutoLoadClasses($class){
 	else{
 		$strClassName = strToLower($class);
 	}
-	
-	//$strDirPath = Loader::GetNamespacePath($strNamespace);
 	
 	$strDirPath = '';
 	switch($strNamespace){
@@ -52,50 +50,54 @@ function AutoLoadClasses($class){
 spl_autoload_register('AutoLoadClasses');
 
 class Loader{
-	private $url;
 	private $controller;
-	private $action;
-	private $query;
-	private $output;
 	
-	public function __construct($url){
-		$this->url = $url;
-		$this->SplitUrlComponents();
-		$this->LoadController();
+	private $strControllerName;
+	private $strAction;
+	private $arrArgs = array();
+	
+	private $body;
+	
+	public function __construct($strUrl){
+		$this->SplitUrlComponents($strUrl);
+		$this->SetupController();
 	}
 	
-	private function SplitUrlComponents(){
-		$arrUrl = explode('/', $this->url);
+	private function SplitUrlComponents($strUrl){
+		$arrUrl = explode('/', $strUrl);
 		
-		$this->controller = '\controller\\' . $arrUrl[0];
-		array_shift($arrUrl);
-		$this->action = $arrUrl[0];
-		array_shift($arrUrl);
-		$this->query = $arrUrl;
+		$this->strControllerName = (isset($arrUrl[0]) && $arrUrl[0] !== '') ? '\controller\\' . $arrUrl[0] : DEFAULT_CONTROLLER;
+		$this->strAction = (isset($arrUrl[1]) && $arrUrl[1] !== '') ? $arrUrl[1] : '';
+		
+		for($i = 2; $i < count($arrUrl); $i ++){
+			$this->arrArgs[] = $arrUrl[$i];
+		}
 	}
 	
-	private function LoadController(){
-		try{
-			if(method_exists($this->controller, $this->action)){
-				$c = new $this->controller();
-				$this->output = $c->RunAction($this->action, $this->query);
+	private function SetupController(){
+		if(class_exists($this->strControllerName)){
+			
+			$this->controller = new $this->strControllerName();
+			$this->strAction = (method_exists($this->controller, $this->strAction)) ? $this->strAction : $this->controller->GetDefaultAction();
+			
+			if(method_exists($this->controller, $this->strAction)){
+				$this->body = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
 			}
 			else{
-				if(!class_exists($this->controller)){
-					echo 'Cannot find Controller: ' . $this->controller;
-				}
-				else{
-					echo 'Controller "' . $this->controller . '" does not have action :' . $this->action;
-				}
+				//Proper 404 later
+				throw new \Exception('Can not find Action: ' . $this->strAction . ' in Controller: ' . $this->strControllerName);
 			}
+			
 		}
-		catch(Exception $e){
-			var_dump($e);
+		else{
+			//Proper 404 later
+			throw new \Exception('Can not find Controller: ' . $this->strControllerName);
 		}
 	}
 	
-	public function Draw(){
-		echo $this->output;
+	public function GetBody(){
+		return $this->body;
 	}
+	
 }
 ?>

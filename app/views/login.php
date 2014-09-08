@@ -8,7 +8,7 @@ class Login extends View{
 		return '
 			' . $this->RenderFlash() .'
 			<div>
-				<form method="post" action="signin">
+				<form method="post" action="' . ROOT_PATH . 'Login/SignIn">
 					<div>
 						<label for="username">Username</label>
 						<input type="text" name="username" id="username" />
@@ -26,7 +26,7 @@ class Login extends View{
 	}
 	
 	public function Success(){
-		return '<p>success</p>';
+		return '<p>success</p><p><a href="' . ROOT_PATH . 'login/signout">Sign out</a></p>';
 	}
 }
 ?>

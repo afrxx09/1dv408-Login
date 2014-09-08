@@ -4,7 +4,15 @@ namespace controller;
 
 class Login extends Controller{
 	
-	public function SignIn($q){
+	public function __construct(){
+		parent::__construct();
+		$this->strDefaultAction = 'SignIn';
+	}
+	
+	public function SignIn(){
+		if($this->helper->IsUserSignedIn()){
+			return $this->view->Success();
+		}
 		if(isset($_POST['username'])){
 			$strUserName = $_POST['username'];
 			$strPassword = $_POST['password'];
@@ -25,6 +33,11 @@ class Login extends Controller{
 		else{
 			return $this->view->SignIn();
 		}
+	}
+	
+	public function SignOut(){
+		session_destroy();
+		return $this->view->SignIn();
 	}
 }
 ?>

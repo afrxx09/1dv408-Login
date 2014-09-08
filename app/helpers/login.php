@@ -5,8 +5,11 @@ namespace helper;
 class Login Extends Helper{
 	
 	public function SignIn($arrUser){
-		//Set Session Variables etc
-		return true;
+		$_SESSION['user'] = $arrUser['username'];
+	}
+	
+	public function IsUserSignedIn(){
+		return isset($_SESSION['user']);
 	}
 }
 

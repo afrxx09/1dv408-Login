@@ -5,7 +5,7 @@ namespace Layout;
 class Layout{
 	private $strVersion;
 	private $strBody;
-	private $strTitle;
+	private $strTitle = 'Login by: afrxx09';
 	private $arrCssFiles;
 	private $arrJavascriptFiles;
 	
@@ -45,7 +45,7 @@ class Layout{
 	private function RenderCssTags(){
 		$strCssTags = '';
 		foreach($this->arrCssFiles as $strCssFileName){
-			$strCssTags .= '<link href="' . \Config::$strCssDir . $strCssFileName . '" media="all" rel="stylesheet" type="text/css" />' . "\n";
+			$strCssTags .= '<link href="' . CSS_PATH . $strCssFileName . '" media="all" rel="stylesheet" type="text/css" />' . "\n";
 		}
 		return $strCssTags;
 	}
@@ -53,22 +53,18 @@ class Layout{
 	private function RenderJavascriptTags(){
 		$strJavascriptTags = '';
 		foreach($this->arrJavascriptFiles as $strJavascriptFileName){
-			$strJavascriptTags .= '<script src="' . \Config::$strJavascriptDir . $strJavascriptFileName . '" type="text/javascript"></script>' . "\n";
+			$strJavascriptTags .= '<script src="' . JS_PATH . $strJavascriptFileName . '" type="text/javascript"></script>' . "\n";
 		}
 		return $strJavascriptTags;
 		
 	}
 	
-	public function RenderLayout($strBody, $strTitle){
+	public function RenderLayout($strBody){
 		if($strBody === null){
 			throw new \Exception('HTML-body can not be null.');
 		}
-		if($strTitle === null){
-			throw new \Exception('Title can not be null');
-		}
 		
 		$this->strBody = $strBody;
-		$this->strTitle = $strTitle;
 		
 		switch($this->strVersion){
 			case 'html5':
