@@ -7,20 +7,23 @@ class Controller{
 	protected $view;
 	protected $model;
 	protected $helper;
-	private $output;
 	
 	public function __construct(){
-		$this->model = new \model\Login();
-		$this->helper = new \helper\Login($this->model);
-		$this->view = new \view\Login($this->model, $this->helper);
+		
+		$r = new \ReflectionClass($this);
+		$s = $r->GetShortName();
+		
+		$strModel = '\model\\' . $s;
+		$strHelper = '\helper\\' . $s;
+		$strView = '\view\\' . $s;
+		
+		$this->model = new $strModel();
+		$this->helper = new $strHelper($this->model);
+		$this->view = new $strView($this->model, $this->helper);
 	}
 	
 	public function RunAction($a, $q){
-		$this->output = $this->$a($q);
-	}
-	
-	public function Draw(){
-		echo $this->output;
+		return $this->$a($q);
 	}
 	
 }

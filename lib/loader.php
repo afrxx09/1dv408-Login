@@ -77,9 +77,8 @@ class Loader{
 	private function LoadController(){
 		try{
 			if(method_exists($this->controller, $this->action)){
-				$o = new $this->controller();
-				$o->RunAction($this->action, $this->query);
-				$o->Draw();
+				$c = new $this->controller();
+				$this->output = $c->RunAction($this->action, $this->query);
 			}
 			else{
 				if(!class_exists($this->controller)){

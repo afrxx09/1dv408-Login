@@ -6,6 +6,7 @@ class Login extends View{
 	
 	public function SignIn(){
 		return '
+			' . $this->RenderFlash() .'
 			<div>
 				<form method="post" action="signin">
 					<div>
@@ -22,6 +23,10 @@ class Login extends View{
 				</form>
 			</div>
 		';
+	}
+	
+	public function Success(){
+		return '<p>success</p>';
 	}
 }
 ?>
