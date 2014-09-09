@@ -10,25 +10,38 @@ class Login extends Controller{
 	}
 	
 	public function SignIn(){
+
+		if($this->helper->UserHasCookie()){
+			var_dump($_COOKIE);
+			exit;
+		}
+
 		if($this->helper->IsUserSignedIn()){
 			return $this->view->Success();
 		}
-		if(isset($_POST['username'])){
-			$strUserName = $_POST['username'];
-			$strPassword = $_POST['password'];
+
+		if($this->view->CheckSignInTry()){
+			$strUserName = $this->view->GetSignInUserName();
+			$strPassword = $this->view->GetSignInPassword();
+			if($strUserName === ''){
+				$this->view->AddFlash('Missing username!', 'error');
+				return $this->view->SignIn();
+			}
 			
 			$arrUser = $this->model->GetUserByUserName($strUserName);
-			
-			if($arrUser != null && $this->model->Auth($arrUser, $strPassword)){
-				$this->helper->SignIn($arrUser);
-				
+
+			if($arrUser !== null && $this->model->Auth($arrUser, $strPassword)){
+				$boolRemeber = $this->view->GetKeepMeLoggedIn();
+				$this->helper->SignInUser($arrUser, $boolRemeber);
+
 				$this->view->AddFlash('Login Successful!', 'success');
 				return $this->view->Success();
 			}
 			else{
-				$this->view->AddFlash('Could not log in.', 'error');
+				$this->view->AddFlash('Username or password incorrect.', 'error');
 				return $this->view->SignIn();
 			}
+			
 		}
 		else{
 			return $this->view->SignIn();
@@ -36,7 +49,8 @@ class Login extends Controller{
 	}
 	
 	public function SignOut(){
-		session_destroy();
+		$this->helper->SignOut();
+		$this->view->AddFlash('Sign out Successful!', 'success');
 		return $this->view->SignIn();
 	}
 }

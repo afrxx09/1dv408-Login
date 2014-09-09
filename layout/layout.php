@@ -5,6 +5,8 @@ namespace Layout;
 class Layout{
 	private $strVersion;
 	private $strBody;
+	private $strFooter;
+
 	private $strTitle = 'Login by: afrxx09';
 	private $arrCssFiles;
 	private $arrJavascriptFiles;
@@ -65,7 +67,8 @@ class Layout{
 		}
 		
 		$this->strBody = $strBody;
-		
+		$this->BuildFooter();
+
 		switch($this->strVersion){
 			case 'html5':
 				$html = $this->BuildHTML5();;
@@ -80,6 +83,15 @@ class Layout{
 		
 		echo $html;
 	}
+
+	private function BuildFooter(){
+		setlocale(LC_ALL, 'sv_SE');
+		$this->strFooter = '
+			<div id="footer">
+				' . strftime('%A') . '
+			</div>
+		';
+	}
 	
 	private function BuildStrict(){
 		$strict =  '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
@@ -91,6 +103,7 @@ class Layout{
 	</head> 
 	<body>
 		' . $this->strBody . '
+		' . $this->strFooter . '
 		' . $this->RenderJavascriptTags() . '
 	</body>
 </html>';
@@ -108,6 +121,7 @@ class Layout{
 </head>
 <body>
 	' . $this->strBody . '
+	' . $this->strFooter . '
 	' . $this->RenderJavascriptTags() . '
 </body>
 </html>';
@@ -125,6 +139,7 @@ class Layout{
 	</head>
 	<body>
 		' . $this->strBody . '
+		' . $this->strFooter . '
 		' . $this->RenderJavascriptTags() . '
 	</body>
 </html>';

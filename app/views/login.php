@@ -4,6 +4,22 @@ namespace view;
 
 class Login extends View{
 	
+	public function CheckSignInTry(){
+		return isset($_POST['username']);
+	}
+
+	public function GetSignInUserName(){
+		return isset($_POST['username']) ? $_POST['username'] : '';
+	}
+
+	public function GetSignInPassword(){
+		return isset($_POST['password']) ? $_POST['password'] : '';
+	}
+
+	public function GetKeepMeLoggedIn(){
+		return isset($_POST['keep-me-signed-in']);
+	}
+
 	public function SignIn(){
 		return '
 			' . $this->RenderFlash() .'
@@ -18,6 +34,10 @@ class Login extends View{
 						<input type="password" name="password" id="password" />
 					</div>
 					<div>
+						<label for="keep-me-signed-in">Keep me signed in</label>
+						<input type="checkbox" id="keep-me-signed-in" name="keep-me-signed-in" />
+					</div>
+					<div>
 						<input type="submit" value="Sign in" />
 					</div>
 				</form>
@@ -26,7 +46,13 @@ class Login extends View{
 	}
 	
 	public function Success(){
-		return '<p>success</p><p><a href="' . ROOT_PATH . 'login/signout">Sign out</a></p>';
+		return '
+			' . $this->RenderFlash() .'
+			<div>
+				<p>Page for logged in users.</p>
+				<p><a href="' . ROOT_PATH . 'login/signout">Sign out</a></p>
+			</div>'
+		;
 	}
 }
 ?>
