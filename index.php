@@ -10,8 +10,7 @@ require_once(ROOT_DIR . 'cfg' . DS . 'config.php');
 require_once(ROOT_DIR . 'lib' . DS . 'loader.php');
 
 try{
-	$url = isset($_GET['url']) ? $_GET['url'] : '';
-	$Loader = new \Loader($url);
+	$Loader = new \Loader();
 }
 catch(Exception $e){
 	if(IN_DEVELOPMENT){

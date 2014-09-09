@@ -24,7 +24,7 @@ class SessionView extends \View{
 		return '
 			' . $this->RenderFlash() .'
 			<div id="SignInForm">
-				<form method="post" action="' . ROOT_PATH . 'Session">
+				<form method="post" action="' . ROOT_PATH . 'Session/CreateSession">
 					<div>
 						<label for="username">Username</label>
 						<input type="text" name="username" id="username" />
@@ -50,7 +50,7 @@ class SessionView extends \View{
 			' . $this->RenderFlash() .'
 			<div>
 				<p>Page for logged in users.</p>
-				<p><a href="' . ROOT_PATH . 'Session/Signout">Sign out</a></p>
+				<p><a href="' . ROOT_PATH . 'Session/DestroySession">Sign out</a></p>
 			</div>'
 		;
 	}

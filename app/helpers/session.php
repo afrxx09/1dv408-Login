@@ -34,7 +34,8 @@ class SessionHelper Extends \Helper{
 
 	public function SignOut(){
 		$this->DeleteAuthCookie();
-		session_destroy();
+		$_SESSION['signed_in'] = false;
+		unset($_SESSION['signed_in']);
 	}
 }
 

@@ -1,5 +1,7 @@
 <?php
-
+/*
+*	Base class for Helpers
+*/
 class Helper{
 	
 	protected $model;
