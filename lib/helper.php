@@ -1,7 +1,5 @@
 <?php
 
-namespace helper;
-
 class Helper{
 	
 	protected $model;

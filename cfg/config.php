@@ -2,27 +2,29 @@
 
 define('IN_DEVELOPMENT', true);
 
-/*
-	Application setting
-*/
-define('DEFAULT_CONTROLLER', '\controller\Login');
+define('DEFAULT_CONTROLLER', '\controller\SessionController');
 
 /*
 	Shortcuts to commonly used directories
 */
-define('CSS_DIR', ROOT_DIR . DS . 'pub' . DS . 'css' . DS);
-define('JS_DIR', ROOT_DIR . DS . 'pub' . DS . 'javascript' . DS);
-define('VIEWS_DIR', ROOT_DIR . DS . 'app' . DS . 'views' . DS);
-define('HELPERS_DIR', ROOT_DIR . DS . 'app' . DS . 'helpers' . DS);
-define('CONTROLLERS_DIR', ROOT_DIR . DS . 'app' . DS . 'controllers' . DS);
-define('MODELS_DIR', ROOT_DIR . DS . 'app' . DS .'models' . DS);
-define('LAYOUT_DIR', ROOT_DIR . DS . 'layout' . DS);
+define('APP_DIR', ROOT_DIR . 'app' . DS);
+define('LIB_DIR', ROOT_DIR . 'lib' . DS);
+define('PUB_DIR', ROOT_DIR . 'pub' . DS);
+
+define('CSS_DIR', PUB_DIR . 'css' . DS);
+define('JS_DIR', PUB_DIR . 'javascript' . DS);
 
 /*
 	Shortcuts to commonly used paths
 */
-define('CSS_PATH', ROOT_PATH . 'pub/css/');
-define('JS_PATH', ROOT_PATH . 'pub/javascript/');
+define('APP_PATH', ROOT_PATH . 'app' . '/');
+define('LIB_PATH', ROOT_PATH . 'lib' . '/');
+define('PUB_PATH', ROOT_PATH . 'pub' . '/');
+
+define('CSS_PATH', PUB_PATH . 'css/');
+define('JS_PATH', PUB_PATH . 'javascript/');
+
+
 
 
 ?>

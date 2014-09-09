@@ -2,7 +2,7 @@
 
 namespace view;
 
-class Login extends View{
+class SessionView extends \View{
 	
 	public function CheckSignInTry(){
 		return isset($_POST['username']);
@@ -20,11 +20,11 @@ class Login extends View{
 		return isset($_POST['keep-me-signed-in']);
 	}
 
-	public function SignIn(){
+	public function NewSession(){
 		return '
 			' . $this->RenderFlash() .'
-			<div>
-				<form method="post" action="' . ROOT_PATH . 'Login/SignIn">
+			<div id="SignInForm">
+				<form method="post" action="' . ROOT_PATH . 'Session">
 					<div>
 						<label for="username">Username</label>
 						<input type="text" name="username" id="username" />
@@ -50,7 +50,7 @@ class Login extends View{
 			' . $this->RenderFlash() .'
 			<div>
 				<p>Page for logged in users.</p>
-				<p><a href="' . ROOT_PATH . 'login/signout">Sign out</a></p>
+				<p><a href="' . ROOT_PATH . 'Session/Signout">Sign out</a></p>
 			</div>'
 		;
 	}

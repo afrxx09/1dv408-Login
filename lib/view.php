@@ -1,7 +1,5 @@
 <?php
 
-namespace view;
-
 class View{
 	protected $model;
 	protected $helper;

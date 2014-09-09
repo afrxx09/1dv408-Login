@@ -8,15 +8,24 @@ function AutoLoadClasses($class){
 	
 	$strNamespace = '';
 	$strClassName = '';
+	$strFilePath = '';
 	$intSeparatorPos = strpos($class, '\\');
 	if($intSeparatorPos !== false){
 		$strNamespace = strToLower(substr($class, 0, $intSeparatorPos));
 		$strClassName = strToLower(substr($class, $intSeparatorPos + 1));
+		$strFilePath = APP_DIR . $strNamespace . 's' . DS . str_replace($strNamespace, '', $strClassName) . '.php';
 	}
 	else{
 		$strClassName = strToLower($class);
+		$strFilePath = LIB_DIR . $strClassName . '.php';
 	}
 	
+	if(!file_exists($strFilePath)){
+		return false;
+	}
+	require_once($strFilePath);
+	
+	/*
 	$strDirPath = '';
 	switch($strNamespace){
 		case 'view':
@@ -44,30 +53,33 @@ function AutoLoadClasses($class){
 		return false;
 	}
 	require_once($strFilePath);
-	
+	*/
 }
 
 spl_autoload_register('AutoLoadClasses');
 
 class Loader{
+	private $strUrl;
+	
 	private $controller;
 	
 	private $strControllerName;
 	private $strAction;
 	private $arrArgs = array();
 	
-	private $body;
+	private $strBody;
 	
-	public function __construct($strUrl){
-		$this->SplitUrlComponents($strUrl);
+	public function __construct(){
+		$this->strUrl = isset($_GET['url']) ? $_GET['url'] : '';
+		$this->SplitUrlComponents();
 		$this->SetupController();
 	}
 	
-	private function SplitUrlComponents($strUrl){
-		$arrUrl = explode('/', $strUrl);
+	private function SplitUrlComponents(){
+		$arrUrl = explode('/', $this->strUrl);
 		
-		$this->strControllerName = (isset($arrUrl[0]) && $arrUrl[0] !== '') ? '\controller\\' . $arrUrl[0] : DEFAULT_CONTROLLER;
-		$this->strAction = (isset($arrUrl[1]) && $arrUrl[1] !== '') ? $arrUrl[1] : '';
+		$this->strControllerName = (isset($arrUrl[0]) && $arrUrl[0] !== '') ? '\controller\\' . $arrUrl[0] . 'controller' : DEFAULT_CONTROLLER;
+		$this->strAction = (isset($arrUrl[1]) && $arrUrl[1] !== '') ? $arrUrl[1] : 'index';
 		
 		for($i = 2; $i < count($arrUrl); $i ++){
 			$this->arrArgs[] = $arrUrl[$i];
@@ -81,7 +93,8 @@ class Loader{
 			$this->strAction = (method_exists($this->controller, $this->strAction)) ? $this->strAction : $this->controller->GetDefaultAction();
 			
 			if(method_exists($this->controller, $this->strAction)){
-				$this->body = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
+				$this->strBody = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
+				$this->RenderPage();
 			}
 			else{
 				//Proper 404 later
@@ -95,8 +108,10 @@ class Loader{
 		}
 	}
 	
-	public function GetBody(){
-		return $this->body;
+	private function RenderPage(){
+		$Layout = new \Layout();
+		$Layout->SetBody($this->strBody);
+		$Layout->PrintLayout();
 	}
 	
 }

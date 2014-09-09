@@ -1,7 +1,5 @@
 <?php
 
-namespace controller;
-
 class Controller{
 	
 	protected $view;
@@ -12,11 +10,11 @@ class Controller{
 	
 	public function __construct(){
 		$r = new \ReflectionClass($this);
-		$s = $r->GetShortName();
+		$s = ucfirst(str_ireplace('controller', '', $r->GetShortName()));
 		
-		$strModel = '\model\\' . $s;
-		$strHelper = '\helper\\' . $s;
-		$strView = '\view\\' . $s;
+		$strModel = '\model\\' . $s . 'Model';
+		$strHelper = '\helper\\' . $s . 'Helper';
+		$strView = '\view\\' . $s . 'View';
 		
 		$this->model = new $strModel();
 		$this->helper = new $strHelper($this->model);

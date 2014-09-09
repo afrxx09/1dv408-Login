@@ -2,11 +2,11 @@
 
 namespace helper;
 
-class Login Extends Helper{
+class SessionHelper Extends \Helper{
 
 	private $strCookieName = 'user';
 	
-	public function SignInUser($arrUser, $boolRemeber){
+	public function SignIn($arrUser, $boolRemeber){
 		if($boolRemeber){
 			$arrUser['token'] = $this->model->GenerateToken();
 			$arrUser['identifier'] = $this->model->GenerateIdintifier($arrUser);
@@ -15,7 +15,7 @@ class Login Extends Helper{
 		$_SESSION['signed_in'] = true;
 	}
 	
-	public function IsUserSignedIn(){
+	public function IsSignedIn(){
 		return isset($_SESSION['signed_in']);
 	}
 	public function UserHasCookie(){

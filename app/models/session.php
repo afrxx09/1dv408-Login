@@ -2,7 +2,7 @@
 
 namespace model;
 
-class Login extends Model{
+class SessionModel extends \Model{
 	
 	public function GetUserByUserName($strUserName){
 		/*Get user from DB later*/
