@@ -61,7 +61,7 @@ class Layout{
 	/*
 	*	Reads content of a template file for choosen HTML-standard and returns it.
 	*/
-	private function RenderHtml(){
+	private function GetApplicationHtml(){
 		$strFileName = 'application-' . $this->strVersion . '.html.php';
 		$strFullPath = APP_DIR . 'layout/' . $strFileName;
 		$f = fopen($strFullPath, 'r');
@@ -69,15 +69,26 @@ class Layout{
 		fclose($f);
 		return $strHTML;
 	}
+
+	private function GetLayoutBody(){
+		$strFullPath = APP_DIR . 'layout/layout-body.html.php';
+		$f = fopen($strFullPath, 'r');
+		$strLayoutBody = fread($f, filesize($strFullPath));
+		fclose($f);
+		return $strLayoutBody;
+	}
 	
 	/*
 	*	Uses a template and fills it with content before printing the final html-document. 
 	*/
 	public function PrintLayout(){
-		$strHTML = $this->RenderHtml();
+		$strLayoutBody = $this->GetLayoutBody();
+		$strLayoutBody = str_replace('<!--{APPBODY}-->', $this->strBody, $strLayoutBody);
+
+		$strHTML = $this->GetApplicationHtml(); 
 		$strHTML = str_replace('<!--{CSS}-->', $this->RenderCssTags(), $strHTML);
 		$strHTML = str_replace('<!--{JAVASCRIPT}-->', $this->RenderJavascriptTags(), $strHTML);
-		$strHTML = str_replace('<!--{BODY}-->', $this->strBody, $strHTML);
+		$strHTML = str_replace('<!--{HTMLBODY}-->',$strLayoutBody, $strHTML);
 		echo $strHTML;
 	}
 }

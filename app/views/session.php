@@ -25,19 +25,19 @@ class SessionView extends \View{
 			' . $this->RenderFlash() .'
 			<div id="SignInForm">
 				<form method="post" action="' . ROOT_PATH . 'Session/CreateSession">
-					<div>
+					<div class="form-row">
 						<label for="username">Username</label>
 						<input type="text" name="username" id="username" />
 					</div>
-					<div>
+					<div class="form-row">
 						<label for="password">Password</label>
 						<input type="password" name="password" id="password" />
 					</div>
-					<div>
+					<div class="form-row">
 						<label for="keep-me-signed-in">Keep me signed in</label>
 						<input type="checkbox" id="keep-me-signed-in" name="keep-me-signed-in" />
 					</div>
-					<div>
+					<div class="form-row">
 						<input type="submit" value="Sign in" />
 					</div>
 				</form>

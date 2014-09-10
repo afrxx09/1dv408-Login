@@ -6,8 +6,7 @@
 		<!--{CSS}-->
 	</head> 
 	<body>
-		<!--{BODY}-->
-		<!--{FOOTER}-->
+		<!--{HTMLBODY}-->
 		<!--{JAVASCRIPT}-->
 	</body>
 </html>
