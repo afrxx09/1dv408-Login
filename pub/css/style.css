@@ -19,8 +19,24 @@ p{
 	clear:both;
 }
 
+.flash{
+	padding:10px;
+	border:1px solid #666;
+}
+.flash.flash-success{
+	background-color:#0f0;
+}
+
+.flash.flash-error{
+	background-color:#f00;
+}
+.flash.flash-warning{
+	background-color:#0ff;
+}
+
+
 /*layout*/
-#wrapper{
+#wrap{
 	width:960px;
 	margin:0 auto;
 }
@@ -44,10 +60,4 @@ form input[type="password"]{
 form input[type="text"]:focus,
 form input[type="password"]:focus{
 	border-color:#0f0;
-}
-form input[type="text"]{
-	
-}
-form input[type="text"]{
-	
 }

@@ -7,10 +7,10 @@ define('ROOT_DIR', dirname(__FILE__) . DS);
 define('ROOT_PATH', '/' . basename(dirname(__FILE__)) . '/');
 
 require_once(ROOT_DIR . 'cfg' . DS . 'config.php');
-require_once(ROOT_DIR . 'lib' . DS . 'loader.php');
+require_once(ROOT_DIR . 'lib' . DS . 'router.php');
 
 try{
-	$Loader = new \Loader();
+	$router = new \Router();
 }
 catch(Exception $e){
 	if(IN_DEVELOPMENT){

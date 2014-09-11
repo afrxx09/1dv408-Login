@@ -14,27 +14,31 @@
 *	Checks are performed to make sure there is a controller class and action-function.
 *	
 */
-class Loader{
+class Router{
 	private $strUrl;
-	
-	private $controller;
-	
-	private $strControllerName;
+	private $strController;
 	private $strAction;
 	private $arrArgs = array();
+
+	private $controller;
+	private $view;
+	private $model;
+	private $helper;
 	
 	public function __construct(){
 		$this->strUrl = isset($_GET['url']) ? $_GET['url'] : '';
-		$this->SplitUrlComponents();
-		$this->SetupController();
+		$this->ParseURL();
+		if($this->Setup()){
+			$this->Dispatch();
+		}
 	}
 	
-	//Split URL to get controller, action and arguments
-	private function SplitUrlComponents(){
+	//Split URL to get controller, action and arguments/parameters
+	private function ParseURL(){
 		$arrUrl = explode('/', $this->strUrl);
 		
-		$this->strControllerName = (isset($arrUrl[0]) && $arrUrl[0] !== '') ? '\controller\\' . $arrUrl[0] . 'controller' : DEFAULT_CONTROLLER;
-		$this->strAction = (isset($arrUrl[1]) && $arrUrl[1] !== '') ? $arrUrl[1] : 'index';
+		$this->strController = (isset($arrUrl[0]) && $arrUrl[0] !== '') ? ucfirst(strToLower($arrUrl[0])) : DEFAULT_CONTROLLER;
+		$this->strAction = (isset($arrUrl[1]) && $arrUrl[1] !== '') ? ucfirst(strToLower($arrUrl[1])) : DEFAULT_ACTION;
 		
 		for($i = 2; $i < count($arrUrl); $i ++){
 			$this->arrArgs[] = $arrUrl[$i];
@@ -46,36 +50,43 @@ class Loader{
 	*	A public controller function like this always returns output to be presented to the user(mostly html-code).
 	*	That resulting output is passed on to a Render-function, that uses a Layout class to render the complete page for the user.
 	*/
-	private function SetupController(){
-		if(class_exists($this->strControllerName)){
-			
-			$this->controller = new $this->strControllerName();
-			$this->strAction = (method_exists($this->controller, $this->strAction)) ? $this->strAction : $this->controller->GetDefaultAction();
-			
-			if(method_exists($this->controller, $this->strAction)){
-				$strBody = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
-				$this->RenderPage($strBody);
+	private function Setup(){
+		$strController = '\controller\\' . $this->strController . 'Controller';
+		$strView = '\view\\' . $this->strController . 'View';
+		$strModel = '\model\\' . $this->strController . 'Model';
+		$strHelper = '\helper\\' . $this->strController . 'Helper';
+
+		if(class_exists($strController)){
+			if(class_exists($strView)){
+				$this->model = (class_exists($strModel)) ? new $strModel : null;
+				$this->helper = (class_exists($strHelper)) ? new $strHelper($this->model) : null;
+				$this->view = new $strView($this->model, $this->helper);
+				$this->controller = new $strController($this->view, $this->model, $this->helper);
+
+				if(method_exists($strController, $this->strAction)){
+					return true;
+				}
+				else{
+					echo 'Can not find Action: ' . $this->strAction . ' in Controller: ' . $strController;
+				}
 			}
 			else{
-				//Proper 404 later
-				throw new \Exception('Can not find Action: ' . $this->strAction . ' in Controller: ' . $this->strControllerName);
+				echo 'Can not find View for: ' . $strController;
 			}
-			
 		}
 		else{
-			//Proper 404 later
-			throw new \Exception('Can not find Controller: ' . $this->strControllerName);
+			echo 'Can not find Controller: ' . $strController;
 		}
+		return false;
 	}
-	
-	/*
-	*	Simply creates a Layout object, adds the result from the controller as content(body) and prints it
-	*	Check /lib/layout.php for details on how this class works
-	*/
-	private function RenderPage($strBody){
-		$Layout = new \Layout();
-		$Layout->SetBody($strBody);
-		$Layout->PrintLayout();
+
+	private function Dispatch(){
+		//$this->controller->BeforeAction();
+		$strActionHtml = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
+		//$this->controller->AfterAction();
+
+		$this->view->SetActionHtml($strActionHtml);
+		$this->view->Render();
 	}
 	
 }

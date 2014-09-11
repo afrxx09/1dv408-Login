@@ -1,5 +1,4 @@
 <?php
-
 /*
 *	Base class for views.
 *
@@ -9,7 +8,13 @@
 *
 */
 
-class View{
+class View extends AppView{
+	const FlashClassError = 'error';
+	const FlashClassSuccess = 'success';
+	const FlashClassWarning = 'warning';
+
+	protected $strActionHtml;
+
 	protected $model;
 	protected $helper;
 	protected $strFlashKey = 'View::FlashMessages';
@@ -17,6 +22,7 @@ class View{
 	public function __construct($model, $helper){
 		$this->model = $model;
 		$this->helper = $helper;
+		parent::__construct();
 	}
 	
 	public function AddFlash($strMessage, $strType){
@@ -35,6 +41,10 @@ class View{
 		}
 		unset($_SESSION[$this->strFlashKey]);
 		return $strFlash;
+	}
+
+	public function SetActionHtml($strActionHtml){
+		$this->strActionHtml = $strActionHtml;
 	}
 }
 

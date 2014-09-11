@@ -4,6 +4,10 @@ namespace view;
 
 class SessionView extends \View{
 	
+	const EmptyUserNamePassword = 'Username and password can not be empty!';
+	const LoginSuccess = 'Login successful!';
+	const AuthFail = 'Incorrect Username or password.';
+
 	public function CheckSignInTry(){
 		return isset($_POST['username']);
 	}
@@ -22,6 +26,7 @@ class SessionView extends \View{
 
 	public function NewSession(){
 		return '
+			<h2>Not signed in</h2>
 			' . $this->RenderFlash() .'
 			<div id="SignInForm">
 				<form method="post" action="' . ROOT_PATH . 'Session/CreateSession">
@@ -40,6 +45,7 @@ class SessionView extends \View{
 					<div class="form-row">
 						<input type="submit" value="Sign in" />
 					</div>
+					<div class="clear"></div>
 				</form>
 			</div>
 		';
@@ -47,6 +53,7 @@ class SessionView extends \View{
 	
 	public function Success(){
 		return '
+			<h2>Signed in as: ' . $this->helper->CurrentUser() . '</h2>
 			' . $this->RenderFlash() .'
 			<div>
 				<p>Page for logged in users.</p>

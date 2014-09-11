@@ -3,12 +3,10 @@
 namespace controller;
 
 class SessionController extends \Controller{
-	
-	public function __construct(){
-		parent::__construct();
-		$this->strDefaultAction = 'NewSession';
+	/*Index is the default function for all controllers, this redirects the default to NewSession instead.*/
+	public function Index(){
+		return $this->NewSession();
 	}
-	
 	/*
 	*	If the user isn't signed in already a form will be renderd.
 	*/
@@ -30,7 +28,7 @@ class SessionController extends \Controller{
 			
 			//Make sure user provided username and password
 			if($strUserName === '' || $strPassword === ''){
-				$this->view->AddFlash('Must provide Username and password.', 'error');
+				$this->view->AddFlash(\View\SessionView::EmptyUserNamePassword, \View::FlashClassError);
 				$this->RedirectTo('Session');
 			}
 			
@@ -43,12 +41,12 @@ class SessionController extends \Controller{
 				$this->helper->SignIn($arrUser, $boolRemeber);
 				
 				//After Sign in, let user know it was signed in and Redirect to desired page(controller#action);
-				$this->view->AddFlash('Login Successful!', 'success');
+				$this->view->AddFlash(\View\SessionView::LoginSuccess, \View::FlashClassSuccess);
 				$this->RedirectTo('Session', 'Success');
 			}
 			else{
 				//Could not Auth user, this means that either username or password was faulty. Redirect back to Sign in form
-				$this->view->AddFlash('Username or password incorrect.', 'error');
+				$this->view->AddFlash(\View\SessionView::AuthFail, \View::FlashClassError);
 				$this->RedirectTo('Session');
 			}
 		}
@@ -58,7 +56,7 @@ class SessionController extends \Controller{
 	
 	public function DestroySession(){
 		$this->helper->SignOut();
-		$this->view->AddFlash('Sign out Successful!', 'success');
+		$this->view->AddFlash('Sign out Successful!', \View::FlashClassSuccess);
 		$this->RedirectTo('Session');
 	}
 	

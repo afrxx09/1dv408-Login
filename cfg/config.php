@@ -2,7 +2,11 @@
 
 define('IN_DEVELOPMENT', true);
 
-define('DEFAULT_CONTROLLER', '\controller\SessionController');
+define('APPLICATION_HTML_STANDARD', 'strict');
+define('APPLICATION_TITLE', 'Log in');
+
+define('DEFAULT_CONTROLLER', 'Session');
+define('DEFAULT_ACTION', 'NewSession');
 
 /*
 	Shortcuts to commonly used directories
@@ -25,6 +29,16 @@ define('CSS_PATH', PUB_PATH . 'css/');
 define('JS_PATH', PUB_PATH . 'javascript/');
 
 
+class Config{
+	public static $DefaultCssFiles = array(
+		'style.css'
+	);
+
+	public static $DefaultJavascriptFiles = array(
+		'jquery-1.11.1.min.js',
+		'application.js'
+	);
+}
 
 
 ?>

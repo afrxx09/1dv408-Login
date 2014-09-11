@@ -13,6 +13,7 @@ class SessionHelper Extends \Helper{
 			$this->CreateAuthCookie($arrUser);
 		}
 		$_SESSION['signed_in'] = true;
+		$_SESSION['user'] = $arrUser['username'];
 	}
 	
 	public function IsSignedIn(){
@@ -36,6 +37,10 @@ class SessionHelper Extends \Helper{
 		$this->DeleteAuthCookie();
 		$_SESSION['signed_in'] = false;
 		unset($_SESSION['signed_in']);
+	}
+
+	public function CurrentUser(){
+		return $_SESSION['user'];
 	}
 }
 

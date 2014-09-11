@@ -4,9 +4,13 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title><!--{TITLE}--></title> 
 		<!--{CSS}-->
-	</head> 
+	</head>
 	<body>
-		<!--{HTMLBODY}-->
+		<div id="wrap">
+			<h1>Sign in system - afrxx09</h1>
+			<!--{HTMLBODY}-->
+			<!--{Include:_footer.html}-->
+		</div>
 		<!--{JAVASCRIPT}-->
 	</body>
 </html>

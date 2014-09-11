@@ -7,6 +7,7 @@
 	</head> 
 	<body>
 		<!--{HTMLBODY}-->
+		<!--{Include:_footer.html}-->
 		<!--{JAVASCRIPT}-->
 	</body>
 </html>
