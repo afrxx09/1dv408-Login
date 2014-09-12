@@ -7,6 +7,7 @@ class SessionController extends \Controller{
 	public function Index(){
 		return $this->NewSession();
 	}
+
 	/*
 	*	If the user isn't signed in already a form will be renderd.
 	*/
@@ -33,12 +34,12 @@ class SessionController extends \Controller{
 			}
 			
 			//Ask model to find a user based on the form data
-			$arrUser = $this->model->GetUserByUserName($strUserName);
-			
+			//$arrUser = $this->model->GetUserByUserName($strUserName);
+			$user = $this->model->GetUserByUserName($strUserName);
 			//If a user was found it's also needs to be authenticated
-			if($arrUser !== null && $this->model->Auth($arrUser, $strPassword)){
+			if($user !== null && $this->model->Auth($user, $strPassword)){
 				//Session helper sets necessary sessions, cookies etc that defines "singed in"
-				$this->helper->SignIn($arrUser, $boolRemeber);
+				$this->helper->SignIn($user, $boolRemeber);
 				
 				//After Sign in, let user know it was signed in and Redirect to desired page(controller#action);
 				$this->view->AddFlash(\View\SessionView::LoginSuccess, \View::FlashClassSuccess);
@@ -61,7 +62,55 @@ class SessionController extends \Controller{
 	}
 	
 	public function Success(){
+		if(!$this->helper->IsSignedIn()){
+			$this->RedirectTo('Session');
+		}
 		return $this->view->Success();
+	}
+
+
+
+
+	/*
+	*	Temporary functions Used for easy testning
+	*/
+	public function CreateNewUser($strUserName, $strPassword){
+		$db = new \db();
+		$strUserName = $db->Wash($strUserName);
+		$strPassword = $db->Wash($strPassword);
+		$strPassword = $this->model->ScramblePassword($strPassword);
+		$strSql = "
+			INSERT INTO
+				user (username, password)
+			VALUES(
+				'" . $strUserName . "',
+				'" . $strPassword . "'
+			)
+		";
+		$res = ($db->Query($strSql));
+		var_dump($strUserName);
+		var_dump($strPassword);
+		var_dump($strSql);
+		var_dump($db->GetError());
+		exit;
+	}
+
+	public function ListUsers(){
+		$db = new \db();
+		$strSql = "
+			SELECT * FROM user
+		";
+		$res = $db->GetRow($strSql);
+		var_dump($res);
+		exit;
+	}
+
+	public function Scalar(){
+		$db = new \db();
+		$strSql = "
+			SELECT user.username FROM user WHERE user.id = 1
+		";
+		$db->GetScalar($strSql);
 	}
 }
 ?>

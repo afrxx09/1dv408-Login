@@ -9,17 +9,6 @@ define('ROOT_PATH', '/' . basename(dirname(__FILE__)) . '/');
 require_once(ROOT_DIR . 'cfg' . DS . 'config.php');
 require_once(ROOT_DIR . 'lib' . DS . 'router.php');
 
-try{
-	$router = new \Router();
-}
-catch(Exception $e){
-	if(IN_DEVELOPMENT){
-		var_dump($e);
-	}
-	else{
-		echo '404 page not found';
-	}
-}
-
+$router = new \Router();
 
 ?>

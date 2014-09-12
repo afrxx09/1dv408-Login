@@ -3,9 +3,34 @@
 namespace model;
 
 class SessionModel extends \Model{
-	
+	private $DAL;
+	public function __construct(){
+		$this->DAL = new \model\SessionDAL();
+		parent::__construct();
+	}
+
+	public function GetUserByToken($strToken){
+		$arrUser = $this->DAL->GetUserByToken($strToken);
+		return ($arrUser === false) ? null : new \model\user($arrUser);
+	}
+
+	public function GetUserById($intId){
+		$arrUser = $this->DAL->GetUserById($intId);
+		return ($arrUser === false) ? null : new \model\user($arrUser);
+	}
+
 	public function GetUserByUserName($strUserName){
-		/*Get user from DB later*/
+		$arrUser = $this->DAL->GetUserByUserName($strUserName);
+		return ($arrUser === false) ? null : new \model\User($arrUser);
+	}
+
+	public function SaveUser($user){
+		return ($this->DAL->SaveUser($user)) ? $user : null;
+	}
+
+	/*
+	public function GetUserByUserNameOLD($strUserName){
+		//Get user from DB later
 		$UserDoesExistInDb = true;
 		
 		if($UserDoesExistInDb){
@@ -24,16 +49,17 @@ class SessionModel extends \Model{
 			return null;
 		}
 	}
+	*/
 	
-	public function ScramblePassword($intUserId, $strPassword){
-		$salt = $intUserId;
-		$pepper = 'asd123';
-		return sha1($salt . $strPassword . $pepper);
+	public function ScramblePassword($strPassword){
+		//Will make more complex if there is time.
+		$salt = 'asd123';
+		return sha1($salt . $strPassword);
 	}
 	
-	public function Auth($arrUser, $strPassword){
-		$p1 = $this->ScramblePassword($arrUser['id'],  $strPassword);
-		$p2 = $arrUser['password'];
+	public function Auth($user, $strPassword){
+		$p1 = $this->ScramblePassword($strPassword);
+		$p2 = $user->GetPassword();
 		return ($p1 === $p2) ? true : false;
 	}
 
@@ -41,9 +67,9 @@ class SessionModel extends \Model{
 		return sha1(uniqid(rand(), true));
 	}
 
-	public function GenerateIdintifier($arrUser){
+	public function GenerateIdintifier($user){
 		$strSalt = 'th3s4ltstr1n6';
-		return sha1($strSalt . sha1($arrUser['username'] . $strSalt));
+		return sha1($strSalt . sha1($user->GetUsername() . $strSalt));
 	}
 }
 ?>

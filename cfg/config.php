@@ -2,6 +2,11 @@
 
 define('IN_DEVELOPMENT', true);
 
+define('DB_HOST', '127.0.0.1');
+define('DB_DATABASE', 'login');
+define('DB_USERNAME', 'afrxx09');
+define('DB_PASSWORD', 'lnustudent');
+
 define('APPLICATION_HTML_STANDARD', 'strict');
 define('APPLICATION_TITLE', 'Log in');
 
