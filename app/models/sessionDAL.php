@@ -63,7 +63,9 @@ class SessionDAL{
 				user.username = '" . $db->Wash($user->GetUserName()) . "',
 				user.password = '" . $db->Wash($user->GetPassword()) . "',
 				user.token = '" . $db->Wash($user->GetToken()) . "',
-				user.identifier = '" . $db->Wash($user->GetIdentifier()) . "'
+				user.ip = '" . $db->Wash($user->GetIp()) . "',
+				user.agent = '" . $db->Wash($user->GetAgent()) . "',
+				user.logintime = '" . $db->Wash($user->GetLoginTime()) . "'
 			WHERE
 				user.id = " . intval($user->GetId()) . "
 		";

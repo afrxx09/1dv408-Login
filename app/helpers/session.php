@@ -9,11 +9,12 @@ class SessionHelper Extends \Helper{
 	public function SignIn($user, $boolRemeber = false){
 		if($boolRemeber){
 			$user->SetToken($this->model->GenerateToken());
-			$user->Setidentifier($this->model->GenerateIdintifier($user));
+			$user->SetIp($_SERVER['REMOTE_ADDR']);
+			$user->SetAgent($_SERVER['HTTP_USER_AGENT']);
+			$user->SetLoginTime(time());
 			$user = $this->model->SaveUser($user);
 			if($user !== null){
 				$this->CreateAuthCookie($user);
-				$_SESSION['token'] = $user->GetToken();
 			}
 		}
 		$_SESSION['username'] = $user->GetUserName();
@@ -25,22 +26,25 @@ class SessionHelper Extends \Helper{
 		}
 		if($this->UserHasCookie()){
 			$arrCookie = explode(':', $_COOKIE[$this->strCookieName]);
-			$token = $arrCookie[0];
-			$identifier = $arrCookie[1];
-			$user = $this->model->GetUserByToken($token);
+			$strToken = $arrCookie[0];
+			$strIdentifier = $arrCookie[1];
+			$user = $this->model->GetUserByToken($strToken);
 			if($user !== null){
-				$this->SignIn($user);
-				return true;
+				if($this->model->GenerateIdintifier($user) === $strIdentifier){
+					$this->SignIn($user);
+					return true;
+				}
 			}
-			return false;
 		}
+		return false;
 	}
 	public function UserHasCookie(){
 		return isset($_COOKIE[$this->strCookieName]);
 	}
 
 	private function CreateAuthCookie($user){
-		$strCookieValue = $user->GetToken() . ':' . $user->GetIdentifier();
+		$strIdentifier = $this->model->GenerateIdintifier($user->GetLoginTime(), $user->GetAgent(), $user->GetIp());
+		$strCookieValue = $user->GetToken() . ':' . $strIdentifier;
 		setcookie($this->strCookieName, $strCookieValue, time()+60*60*24*30, '/');
 	}
 
@@ -51,9 +55,6 @@ class SessionHelper Extends \Helper{
 
 	public function SignOut(){
 		$this->DeleteAuthCookie();
-		$_SESSION['token'] = false;
-		$_SESSION['username'] = false;
-		unset($_SESSION['token']);
 		unset($_SESSION['username']);
 	}
 

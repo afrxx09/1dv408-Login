@@ -7,14 +7,18 @@ class User{
 	private $strUsername;
 	private $strPassword;
 	private $strToken;
-	private $strIdentifier;
+	private $strIp;
+	private $strAgent;
+	private $strLoginTime;
 
 	public function __construct($arrUser){
 		$this->intId = $arrUser['id'];
 		$this->strUsername = $arrUser['username'];
 		$this->strPassword = $arrUser['password'];
 		$this->strToken = $arrUser['token'];
-		$this->strIdentifier = $arrUser['identifier'];
+		$this->strIp = $arrUser['ip'];
+		$this->strAgent = $arrUser['agent'];
+		$this->strLoginTime = $arrUser['logintime'];
 	}
 	
 	/*Getters*/
@@ -34,8 +38,16 @@ class User{
 		return $this->strToken;
 	}
 
-	public function GetIdentifier(){
-		return $this->strIdentifier;
+	public function GetIp(){
+		return $this->strIp;
+	}
+	
+	public function GetAgent(){
+		return $this->strAgent;
+	}
+	
+	public function GetLoginTime(){
+		return $this->strLoginTime;
 	}
 
 	/*Setters*/
@@ -51,8 +63,16 @@ class User{
 		$this->strToken = '' . $s;
 	}
 
-	public function SetIdentifier($s){
-		$this->strIdentifier = '' . $s;
+	public function SetIp($s){
+		$this->strIp = '' . $s;
+	}
+	
+	public function SetAgent($s){
+		$this->strAgent = '' . $s;
+	}
+	
+	public function SetLoginTime($s){
+		$this->strLoginTime = '' . $s;
 	}
 }
 ?>

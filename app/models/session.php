@@ -67,9 +67,8 @@ class SessionModel extends \Model{
 		return sha1(uniqid(rand(), true));
 	}
 
-	public function GenerateIdintifier($user){
-		$strSalt = 'th3s4ltstr1n6';
-		return sha1($strSalt . sha1($user->GetUsername() . $strSalt));
+	public function GenerateIdintifier($strLoginTime, $strAgent, $strIp){
+		return sha1($strLoginTime . $strAgent . $strIp);
 	}
 }
 ?>
