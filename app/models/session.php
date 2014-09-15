@@ -27,29 +27,6 @@ class SessionModel extends \Model{
 	public function SaveUser($user){
 		return ($this->DAL->SaveUser($user)) ? $user : null;
 	}
-
-	/*
-	public function GetUserByUserNameOLD($strUserName){
-		//Get user from DB later
-		$UserDoesExistInDb = true;
-		
-		if($UserDoesExistInDb){
-			$arrUser = array(
-				'id' => 1,
-				'username' => 'admin',
-				'password' => 'pwd'
-			);
-			
-			//Passwords will be scrambled when they are received from DB
-			$arrUser['password'] = $this->ScramblePassword($arrUser['id'], $arrUser['password']);
-			
-			return $arrUser;
-		}
-		else{
-			return null;
-		}
-	}
-	*/
 	
 	public function ScramblePassword($strPassword){
 		//Will make more complex if there is time.
@@ -67,8 +44,8 @@ class SessionModel extends \Model{
 		return sha1(uniqid(rand(), true));
 	}
 
-	public function GenerateIdintifier($strLoginTime, $strAgent, $strIp){
-		return sha1($strLoginTime . $strAgent . $strIp);
+	public function GenerateIdintifier($strAgent, $strIp){
+		return sha1($strAgent . $strIp);
 	}
 }
 ?>

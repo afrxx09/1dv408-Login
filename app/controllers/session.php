@@ -34,7 +34,6 @@ class SessionController extends \Controller{
 			}
 			
 			//Ask model to find a user based on the form data
-			//$arrUser = $this->model->GetUserByUserName($strUserName);
 			$user = $this->model->GetUserByUserName($strUserName);
 			//If a user was found it's also needs to be authenticated
 			if($user !== null && $this->model->Auth($user, $strPassword)){

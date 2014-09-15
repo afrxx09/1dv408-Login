@@ -5,6 +5,7 @@ namespace helper;
 class SessionHelper Extends \Helper{
 
 	private $strCookieName = 'user';
+	private $intCookieTime = 1000000;
 	
 	public function SignIn($user, $boolRemeber = false){
 		if($boolRemeber){
@@ -28,9 +29,11 @@ class SessionHelper Extends \Helper{
 			$arrCookie = explode(':', $_COOKIE[$this->strCookieName]);
 			$strToken = $arrCookie[0];
 			$strIdentifier = $arrCookie[1];
+			$strLoginTime = $arrCookie[2];
 			$user = $this->model->GetUserByToken($strToken);
 			if($user !== null){
-				if($this->model->GenerateIdintifier($user) === $strIdentifier){
+				$strCurrentVisitorIdentifier = $this->model->GenerateIdintifier($_SERVER['HTTP_USER_AGENT'], $_SERVER['REMOTE_ADDR']);
+				if($strCurrentVisitorIdentifier === $strIdentifier && $user->GetLoginTime() === $strLoginTime){
 					$this->SignIn($user);
 					return true;
 				}
@@ -43,9 +46,9 @@ class SessionHelper Extends \Helper{
 	}
 
 	private function CreateAuthCookie($user){
-		$strIdentifier = $this->model->GenerateIdintifier($user->GetLoginTime(), $user->GetAgent(), $user->GetIp());
-		$strCookieValue = $user->GetToken() . ':' . $strIdentifier;
-		setcookie($this->strCookieName, $strCookieValue, time()+60*60*24*30, '/');
+		$strIdentifier = $this->model->GenerateIdintifier($user->GetAgent(), $user->GetIp());
+		$strCookieValue = $user->GetToken() . ':' . $strIdentifier . ':' . $user->GetLoginTime();
+		setcookie($this->strCookieName, $strCookieValue, intval($user->GetLoginTime()) + $this->intCookieTime, '/');
 	}
 
 	private function DeleteAuthCookie(){
