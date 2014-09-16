@@ -21,9 +21,9 @@ class Router{
 	private $arrArgs = array();
 
 	private $controller;
-	private $view;
-	private $model;
-	private $helper;
+	//private $view;
+	//private $model;
+	//private $helper;
 	
 	public function __construct(){
 		$this->strUrl = isset($_GET['url']) ? $_GET['url'] : '';
@@ -52,27 +52,27 @@ class Router{
 	*/
 	private function Setup(){
 		$strController = '\controller\\' . $this->strController . 'Controller';
-		$strView = '\view\\' . $this->strController . 'View';
-		$strModel = '\model\\' . $this->strController . 'Model';
-		$strHelper = '\helper\\' . $this->strController . 'Helper';
+		//$strView = '\view\\' . $this->strController . 'View';
+		//$strModel = '\model\\' . $this->strController . 'Model';
+		//$strHelper = '\helper\\' . $this->strController . 'Helper';
 
 		if(class_exists($strController)){
-			if(class_exists($strView)){
-				$this->model = (class_exists($strModel)) ? new $strModel : null;
-				$this->helper = (class_exists($strHelper)) ? new $strHelper($this->model) : null;
-				$this->view = new $strView($this->model, $this->helper);
-				$this->controller = new $strController($this->view, $this->model, $this->helper);
-
+			//if(class_exists($strView)){
+				//$this->model = (class_exists($strModel)) ? new $strModel : null;
+				//$this->helper = (class_exists($strHelper)) ? new $strHelper($this->model) : null;
+				//$this->view = new $strView($this->model, $this->helper);
+				//$this->controller = new $strController($this->view, $this->model, $this->helper);
+				$this->controller = new $strController();
 				if(method_exists($strController, $this->strAction)){
 					return true;
 				}
 				else{
 					echo 'Can not find Action: ' . $this->strAction . ' in Controller: ' . $strController;
 				}
-			}
-			else{
-				echo 'Can not find View for: ' . $strController;
-			}
+			//}
+			//else{
+			//	echo 'Can not find View for: ' . $strController;
+			//}
 		}
 		else{
 			echo 'Can not find Controller: ' . $strController;
@@ -82,11 +82,12 @@ class Router{
 
 	private function Dispatch(){
 		//$this->controller->BeforeAction();
-		$strActionHtml = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
+		call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
+		//$strActionHtml = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
 		//$this->controller->AfterAction();
 
-		$this->view->SetActionHtml($strActionHtml);
-		$this->view->Render();
+		//$this->view->SetActionHtml($strActionHtml);
+		//$this->view->Render();
 	}
 	
 }

@@ -18,13 +18,13 @@ class AppView{
 		$this->arrJavascriptFiles = Config::$DefaultJavascriptFiles;
 	}
 
-	public function Render(){
+	public function Render($html){
 		$strTemplate = $this->GetApplicationTemplate();
 		$this->BuildIncludes($strTemplate);
 		$this->BuildCssTags();
 		$this->BuildJavascriptTags();
 		$this->arrPageData['title'] = APPLICATION_TITLE;
-		$this->arrPageData['actionview'] = $this->strActionHtml;
+		//$this->arrPageData['actionview'] = $this->strActionHtml;
 
 		$strHtml = $strTemplate;
 		foreach($this->arrPageData['includes'] as $arrInclude){
@@ -33,7 +33,8 @@ class AppView{
 		$strHtml = str_replace('<!--{CSS}-->', trim($this->arrPageData['css']), $strHtml);
 		$strHtml = str_replace('<!--{JAVASCRIPT}-->', trim($this->arrPageData['js']), $strHtml);
 		$strHtml = str_replace('<!--{TITLE}-->', trim($this->arrPageData['title']), $strHtml);
-		$strHtml = str_replace('<!--{HTMLBODY}-->', trim($this->arrPageData['actionview']), $strHtml);
+		//$strHtml = str_replace('<!--{HTMLBODY}-->', trim($this->arrPageData['actionview']), $strHtml);
+		$strHtml = str_replace('<!--{HTMLBODY}-->', trim($html), $strHtml);
 
 		echo $strHtml;
 	}

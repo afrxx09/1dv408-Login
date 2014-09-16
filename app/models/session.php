@@ -3,29 +3,44 @@
 namespace model;
 
 class SessionModel extends \Model{
-	private $DAL;
+	
+	private $strSessionKey = 'login';
+	
 	public function __construct(){
-		$this->DAL = new \model\SessionDAL();
+		parent::__construct();
+	}
+	
+	public function CreateLoginSession(){
+		$_SESSION[$this->strSessionKey] = true;
+	}
+	
+	public function LoginSessionExists(){
+		return isset($_SESSION[$this->strSessionKey] && $_SESSION[$this->strSessionKey] === true) ? true : false;
+	}
+	/*
+	private $userDAL;
+	public function __construct(){
+		$this->userDAL = new \model\UserDAL();
 		parent::__construct();
 	}
 
 	public function GetUserByToken($strToken){
-		$arrUser = $this->DAL->GetUserByToken($strToken);
+		$arrUser = $this->userDAL->GetUserByToken($strToken);
 		return ($arrUser === false) ? null : new \model\user($arrUser);
 	}
 
 	public function GetUserById($intId){
-		$arrUser = $this->DAL->GetUserById($intId);
+		$arrUser = $this->userDAL->GetUserById($intId);
 		return ($arrUser === false) ? null : new \model\user($arrUser);
 	}
 
 	public function GetUserByUserName($strUserName){
-		$arrUser = $this->DAL->GetUserByUserName($strUserName);
+		$arrUser = $this->userDAL->GetUserByUserName($strUserName);
 		return ($arrUser === false) ? null : new \model\User($arrUser);
 	}
 
 	public function SaveUser($user){
-		return ($this->DAL->SaveUser($user)) ? $user : null;
+		return ($this->userDAL->SaveUser($user)) ? $user : null;
 	}
 	
 	public function ScramblePassword($strPassword){
@@ -47,5 +62,6 @@ class SessionModel extends \Model{
 	public function GenerateIdintifier($strAgent, $strIp){
 		return sha1($strAgent . $strIp);
 	}
+	*/
 }
 ?>

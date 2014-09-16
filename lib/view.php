@@ -15,16 +15,27 @@ class View extends AppView{
 
 	protected $strActionHtml;
 
+	protected $strFlashKey = 'View::FlashMessages';
+	
+	public  function __construct(){
+		parent::__construct();
+	}
+	
+	/*
 	protected $model;
 	protected $helper;
 	protected $strFlashKey = 'View::FlashMessages';
+	
+	public  function __construct(){
+		parent::__construct();
+	}
 	
 	public function __construct($model, $helper){
 		$this->model = $model;
 		$this->helper = $helper;
 		parent::__construct();
 	}
-	
+	*/
 	public function AddFlash($strMessage, $strType){
 		$_SESSION[$this->strFlashKey][$strType][] = $strMessage;
 	}

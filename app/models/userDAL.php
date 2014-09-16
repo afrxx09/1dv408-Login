@@ -2,13 +2,13 @@
 
 namespace model;
 
-class SessionDAL{
+class UserDAL{
 	
 	public function __construct(){
 
 	}
 
-	public function GetUserById($intId){
+	public function getUserById($intId){
 		$db = new \db();
 		$strSql = "
 			SELECT
@@ -23,7 +23,7 @@ class SessionDAL{
 		return $db->GetRow($strSql);
 	}
 
-	public function GetUserByToken($strToken){
+	public function getUserByToken($strToken){
 		$db = new \db();
 		$strSql = "
 			SELECT
@@ -39,7 +39,7 @@ class SessionDAL{
 		return $result;
 	}
 
-	public function GetUserByUserName($strUserName){
+	public function getUserByUserName($strUserName){
 		$db = new \db();
 		$strSql = "
 			SELECT
@@ -54,28 +54,22 @@ class SessionDAL{
 		return $db->GetRow($strSql);
 	}
 
-	public function SaveUser($user){
+	public function saveUser($arrUser){
 		$db = new \db();
 		$strSql = "
 			UPDATE
 				user
 			SET
-				user.username = '" . $db->Wash($user->GetUserName()) . "',
-				user.password = '" . $db->Wash($user->GetPassword()) . "',
-				user.token = '" . $db->Wash($user->GetToken()) . "',
-				user.ip = '" . $db->Wash($user->GetIp()) . "',
-				user.agent = '" . $db->Wash($user->GetAgent()) . "',
-				user.logintime = '" . $db->Wash($user->GetLoginTime()) . "'
+				user.username = '" . $db->Wash($arrUser['username']) . "',
+				user.password = '" . $db->Wash($arrUser['password']) . "',
+				user.token = '" . $db->Wash($arrUser['token']) . "',
+				user.ip = '" . $db->Wash($arrUser['ip']) . "',
+				user.agent = '" . $db->Wash($arrUser['agent']) . "',
+				user.logintime = '" . $db->Wash($arrUser['logintime']) . "'
 			WHERE
-				user.id = " . intval($user->GetId()) . "
+				user.id = " . intval($user['id']) . "
 		";
-		$res = $db->Query($strSql);
-		if($res === false){
-			var_dump($db->GetErrorArray());
-			exit;
-		}
-		return $res;
-
+		return $db->Query($strSql);
 	}
 
 }

@@ -10,6 +10,7 @@
 *	
 */
 class Controller{
+	/*
 	protected $action;
 	protected $view;
 	protected $model;
@@ -20,8 +21,12 @@ class Controller{
 		$this->helper = $helper;
 		$this->model =  $model;
 	}
+	*/
 	
-	public function RedirectTo($strController = '', $strAction = ''){
+	public function __construct(){
+	}
+	
+	public function redirectTo($strController = '', $strAction = ''){
 		$strLocaton = ROOT_PATH . (($strController != '') ? $strController . '/' : '') . (($strAction != '') ? $strAction . '/' : '');
 		header('location: ' . $strLocaton);
 		die();
