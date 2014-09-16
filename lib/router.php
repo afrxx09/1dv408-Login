@@ -21,20 +21,17 @@ class Router{
 	private $arrArgs = array();
 
 	private $controller;
-	//private $view;
-	//private $model;
-	//private $helper;
 	
 	public function __construct(){
 		$this->strUrl = isset($_GET['url']) ? $_GET['url'] : '';
-		$this->ParseURL();
-		if($this->Setup()){
-			$this->Dispatch();
+		$this->parseURL();
+		if($this->setup()){
+			$this->dispatch();
 		}
 	}
 	
 	//Split URL to get controller, action and arguments/parameters
-	private function ParseURL(){
+	private function parseURL(){
 		$arrUrl = explode('/', $this->strUrl);
 		
 		$this->strController = (isset($arrUrl[0]) && $arrUrl[0] !== '') ? ucfirst(strToLower($arrUrl[0])) : DEFAULT_CONTROLLER;
@@ -50,29 +47,17 @@ class Router{
 	*	A public controller function like this always returns output to be presented to the user(mostly html-code).
 	*	That resulting output is passed on to a Render-function, that uses a Layout class to render the complete page for the user.
 	*/
-	private function Setup(){
+	private function setup(){
 		$strController = '\controller\\' . $this->strController . 'Controller';
-		//$strView = '\view\\' . $this->strController . 'View';
-		//$strModel = '\model\\' . $this->strController . 'Model';
-		//$strHelper = '\helper\\' . $this->strController . 'Helper';
 
 		if(class_exists($strController)){
-			//if(class_exists($strView)){
-				//$this->model = (class_exists($strModel)) ? new $strModel : null;
-				//$this->helper = (class_exists($strHelper)) ? new $strHelper($this->model) : null;
-				//$this->view = new $strView($this->model, $this->helper);
-				//$this->controller = new $strController($this->view, $this->model, $this->helper);
-				$this->controller = new $strController();
-				if(method_exists($strController, $this->strAction)){
-					return true;
-				}
-				else{
-					echo 'Can not find Action: ' . $this->strAction . ' in Controller: ' . $strController;
-				}
-			//}
-			//else{
-			//	echo 'Can not find View for: ' . $strController;
-			//}
+			$this->controller = new $strController();
+			if(method_exists($strController, $this->strAction)){
+				return true;
+			}
+			else{
+				echo 'Can not find Action: ' . $this->strAction . ' in Controller: ' . $strController;
+			}
 		}
 		else{
 			echo 'Can not find Controller: ' . $strController;
@@ -80,14 +65,9 @@ class Router{
 		return false;
 	}
 
-	private function Dispatch(){
-		//$this->controller->BeforeAction();
+	private function dispatch(){
+		//$this->controller->BeforeAction(); //figure out behaviour for this
 		call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
-		//$strActionHtml = call_user_func_array(array($this->controller, $this->strAction), $this->arrArgs);
-		//$this->controller->AfterAction();
-
-		//$this->view->SetActionHtml($strActionHtml);
-		//$this->view->Render();
 	}
 	
 }

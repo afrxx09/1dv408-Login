@@ -21,26 +21,11 @@ class View extends AppView{
 		parent::__construct();
 	}
 	
-	/*
-	protected $model;
-	protected $helper;
-	protected $strFlashKey = 'View::FlashMessages';
-	
-	public  function __construct(){
-		parent::__construct();
-	}
-	
-	public function __construct($model, $helper){
-		$this->model = $model;
-		$this->helper = $helper;
-		parent::__construct();
-	}
-	*/
-	public function AddFlash($strMessage, $strType){
+	public function addFlash($strMessage, $strType){
 		$_SESSION[$this->strFlashKey][$strType][] = $strMessage;
 	}
 	
-	protected function RenderFlash(){
+	protected function renderFlash(){
 		$arrFlash = (isset($_SESSION[$this->strFlashKey])) ? $_SESSION[$this->strFlashKey] : array();
 		$strFlash = '';
 		foreach($arrFlash as $type => $arrMessages){
@@ -54,7 +39,7 @@ class View extends AppView{
 		return $strFlash;
 	}
 
-	public function SetActionHtml($strActionHtml){
+	public function setActionHtml($strActionHtml){
 		$this->strActionHtml = $strActionHtml;
 	}
 }

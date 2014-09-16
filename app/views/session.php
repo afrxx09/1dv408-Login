@@ -7,6 +7,8 @@ class SessionView extends \View{
 	const EmptyUserNamePassword = 'Username and password can not be empty!';
 	const LoginSuccess = 'Login successful!';
 	const AuthFail = 'Incorrect Username or password.';
+	const CookieCreated = 'Cookie for persistent connection created.';
+	const CookieLogin = 'Successfully logged in with persistent cookie.';
 	
 	private $sessionModel;
 	private $userModel;
@@ -21,45 +23,58 @@ class SessionView extends \View{
 	}
 	
 	//	Get $_POST-values
-	public function CheckSignInTry(){
+	public function checkSignInTry(){
 		return isset($_POST['username']);
 	}
 
-	public function GetSignInUserName(){
+	public function getSignInUserName(){
 		return isset($_POST['username']) ? $_POST['username'] : '';
 	}
 
-	public function GetSignInPassword(){
+	public function getSignInPassword(){
 		return isset($_POST['password']) ? $_POST['password'] : '';
 	}
 
-	public function GetKeepMeLoggedIn(){
+	public function getKeepMeLoggedIn(){
 		return isset($_POST['keep-me-signed-in']);
 	}
 	
 	//	Cookie stuff
-	public function AuthCookieExists(){
+	public function authCookieExists(){
 		return isset($_COOKIE[$this->strCookieName]);
 	}
 	
-	public function CreateAuthCookie($arrUser){
+	public function createAuthCookie($arrUser){
 		$strCookieContent = $this->userModel->generateCookieContent($arrUser);
 		$intCookieTime = $this->userModel->GetLoginTime($arrUser) + $this->intCookieTime;
 		setcookie($this->strCookieName, $strCookieContent, $intCookieTime, '/');
 	}
 	
-	public function DeleteAuthCookie(){
+	public function destroyAuthCookie(){
 		unset($_COOKIE[$this->strCookieName]);
 		setcookie($this->strCookieName, '', time()-3600, '/');
 	}
 	
+	public function getAuthCookie(){
+		return $_COOKIE[$this->strCookieName];
+	}
+
 	public function signInWithCookie(){
-		$arrCookie = explode(':', $_COOKIE[$this->strCookieName]);
+		$arrCookie = explode(':', $this->getAuthCookie());
 		$strToken = $arrCookie[0];
 		$strIdentifier = $arrCookie[1];
-		$strLoginTime = $arrCookie[2];
-		$user = $this->model->GetUserByToken($strToken);
+		$strLoginTime = intval($arrCookie[2]);
+		$arrUser = $this->userModel->getUserByToken($strToken);
+		if($arrUser !== false){
+			$strCurrentVisitorIdentifier = $this->userModel->generateIdentifier();
+			if($strCurrentVisitorIdentifier === $strIdentifier && $this->userModel->getLoginTime($arrUser) === $strLoginTime){
+				$this->sessionModel->createLoginSession();
+				return true;
+			}
+		}
+		return false;
 	}
+
 	
 	//	HTML-for render
 	public function NewSession(){
@@ -89,7 +104,7 @@ class SessionView extends \View{
 		';
 	}
 	
-	public function Success(){
+	public function successPage(){
 		return '
 			<h2>Signed in as: ' . /*$this->helper->CurrentUser()*/'' . '</h2>
 			' . $this->RenderFlash() .'

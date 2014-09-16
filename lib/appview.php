@@ -14,17 +14,16 @@ class AppView{
 	protected $arrIncludeFiles = array();
 	
 	public function __construct(){
-		$this->arrCssFiles = Config::$DefaultCssFiles;
-		$this->arrJavascriptFiles = Config::$DefaultJavascriptFiles;
+		$this->arrCssFiles = Config::$arrDefaultCssFiles;
+		$this->arrJavascriptFiles = Config::$arrDefaultJavascriptFiles;
 	}
 
-	public function Render($html){
-		$strTemplate = $this->GetApplicationTemplate();
-		$this->BuildIncludes($strTemplate);
-		$this->BuildCssTags();
-		$this->BuildJavascriptTags();
+	public function render($html){
+		$strTemplate = $this->getApplicationTemplate();
+		$this->buildIncludes($strTemplate);
+		$this->buildCssTags();
+		$this->buildJavascriptTags();
 		$this->arrPageData['title'] = APPLICATION_TITLE;
-		//$this->arrPageData['actionview'] = $this->strActionHtml;
 
 		$strHtml = $strTemplate;
 		foreach($this->arrPageData['includes'] as $arrInclude){
@@ -33,17 +32,16 @@ class AppView{
 		$strHtml = str_replace('<!--{CSS}-->', trim($this->arrPageData['css']), $strHtml);
 		$strHtml = str_replace('<!--{JAVASCRIPT}-->', trim($this->arrPageData['js']), $strHtml);
 		$strHtml = str_replace('<!--{TITLE}-->', trim($this->arrPageData['title']), $strHtml);
-		//$strHtml = str_replace('<!--{HTMLBODY}-->', trim($this->arrPageData['actionview']), $strHtml);
 		$strHtml = str_replace('<!--{HTMLBODY}-->', trim($html), $strHtml);
 
 		echo $strHtml;
 	}
 	
-	public function AddCssFile($strFileName){
+	public function addCssFile($strFileName){
 		$this->arrCssFiles[] = $strFileName;
 	}
 
-	private function BuildCssTags(){
+	private function buildCssTags(){
 		$this->arrPageData['css'] = '';
 		foreach($this->arrCssFiles as $strCssFileName){
 			$this->arrPageData['css'] .= '<link href="' . CSS_PATH . $strCssFileName . '" media="all" rel="stylesheet" type="text/css" />' . "\n";
@@ -51,11 +49,11 @@ class AppView{
 		trim($this->arrPageData['css']);
 	}
 	
-	public function AddJavaScriptFile($strFileName){
+	public function addJavaScriptFile($strFileName){
 		$this->arrJavascriptFiles[] = $strFileName;
 	}
 
-	private function BuildJavascriptTags(){
+	private function buildJavascriptTags(){
 		$this->arrPageData['js'] = '';
 		foreach($this->arrJavascriptFiles as $strJavascriptFileName){
 			$this->arrPageData['js'] .= '<script src="' . JS_PATH . $strJavascriptFileName . '" type="text/javascript"></script>' . "\n";
@@ -63,7 +61,7 @@ class AppView{
 		trim($this->arrPageData['js']);
 	}
 
-	private function GetApplicationTemplate(){
+	private function getApplicationTemplate(){
 		$strFileName = 'application-' . $this->strHtmlStandard . '.html.php';
 		$strFullPath = APP_DIR . 'layout/' . $strFileName;
 		$f = fopen($strFullPath, 'r');
@@ -72,7 +70,7 @@ class AppView{
 		return $strHTML;
 	}
 
-	private function BuildIncludes($strHtml){
+	private function buildIncludes($strHtml){
 		preg_match_all('/<!--{Include:(.*)}-->/', $strHtml, $arrIncludes, PREG_PATTERN_ORDER);
 		$this->arrPageData['includes'] = array();
 		for($i = 0; $i < count($arrIncludes); $i++){

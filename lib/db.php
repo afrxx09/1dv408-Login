@@ -4,28 +4,28 @@ class db{
 	private $arrError = array();
 	protected static $con;
 
-	private function Connect(){
+	private function connect(){
 		if(!isset(self::$con)){
 			self::$con = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
 		}
 		return (self::$con === false) ? false : self::$con;
 	}
 
-	public function Query($strSql){
-		$con = $this->Connect();
+	public function query($strSql){
+		$con = $this->connect();
 		$result = $con->query($strSql) or trigger_error("Query Failed! SQL: $sql - Error: ".mysqli_error(), E_USER_ERROR);;
 		if($result === false){
-			$this->AddError($strSql);
+			$this->addError($strSql);
 			return false;
 		}
 		return true;
 	}
 
-	public function GetScalar($strSql){
-		$con = $this->Connect();
+	public function getScalar($strSql){
+		$con = $this->connect();
 		$result = $con->query($strSql);
 		if($result->num_rows !== 1){
-			$this->AddError($strSql);
+			$this->addError($strSql);
 			return false;
 		}
 		$arr = $result->fetch_row();
@@ -33,11 +33,11 @@ class db{
 		return $val;
 	}
 
-	public function GetRow($strSql){
-		$con = $this->Connect();
+	public function getRow($strSql){
+		$con = $this->connect();
 		$result = $con->query($strSql);
 		if($result === false || $result->num_rows != 1){
-			$this->AddError($strSql);
+			$this->addError($strSql);
 			return false;
 		}
 
@@ -45,12 +45,12 @@ class db{
 		return $row;
 	}
 
-	public function GetAsoc($strSql){
-		$con = $this->Connect();
+	public function getAsoc($strSql){
+		$con = $this->connect();
 		$rows = array();
 		$result = $con->query($strSql);
 		if($result === false){
-			$this->AddError($strSql);	
+			$this->addError($strSql);	
 			return false;
 		}
 		while($row = $result->fetch_assoc()){
@@ -59,22 +59,22 @@ class db{
 		return $rows;
 	}
 
-	public function Wash($strString){
-		$con = $this->Connect();
+	public function wash($strString){
+		$con = $this->connect();
 		return $con->real_escape_string($strString);
 	}
 
-	public function GetError(){
-		$con = $this->Connect();
+	public function getError(){
+		$con = $this->connect();
 		return $con->error;
 	}
 
-	private function AddError($strSql){
-		$this->arrError['message'] = $this->GetError();
+	private function addError($strSql){
+		$this->arrError['message'] = $this->getError();
 		$this->arrError['sql'] = $strSql;
 	}
 
-	public function GetErrorArray(){
+	public function getErrorArray(){
 		return $this->arrError;
 	}
 }

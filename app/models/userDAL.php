@@ -67,7 +67,7 @@ class UserDAL{
 				user.agent = '" . $db->Wash($arrUser['agent']) . "',
 				user.logintime = '" . $db->Wash($arrUser['logintime']) . "'
 			WHERE
-				user.id = " . intval($user['id']) . "
+				user.id = " . intval($arrUser['id']) . "
 		";
 		return $db->Query($strSql);
 	}

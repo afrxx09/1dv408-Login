@@ -35,11 +35,11 @@ define('JS_PATH', PUB_PATH . 'javascript/');
 
 
 class Config{
-	public static $DefaultCssFiles = array(
+	public static $arrDefaultCssFiles = array(
 		'style.css'
 	);
 
-	public static $DefaultJavascriptFiles = array(
+	public static $arrDefaultJavascriptFiles = array(
 		'jquery-1.11.1.min.js',
 		'application.js'
 	);
