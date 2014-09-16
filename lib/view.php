@@ -31,9 +31,9 @@ class View extends AppView{
 		foreach($arrFlash as $type => $arrMessages){
 			$strMessages = '';
 			foreach($arrMessages as $strMessage){
-				$strMessages .= '<p class="flash-message">' . $strMessage . '</p>';
+				$strMessages .= '<div class="flash-message flash-' . $type . '">' . $strMessage . '<span class="close">hide&and;</span></div>';
 			}
-			$strFlash .= '<div class="flash flash-' . $type . '" />' . $strMessages . '</div>';
+			$strFlash .= '<div class="flash" />' . $strMessages . '</div>';
 		}
 		unset($_SESSION[$this->strFlashKey]);
 		return $strFlash;

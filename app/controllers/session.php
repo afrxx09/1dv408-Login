@@ -19,20 +19,54 @@ class SessionController extends \Controller{
 	public function index(){
 		$this->newSession();
 	}
-
+	
+	public function checkSignIn(){
+		$boolSuccess = false;
+		if($this->sessionModel->loginSessionExists()){
+			$arrUser = $this->userModel->getUserByToken($this->sessionModel->getSessionToken());
+			if($arrUser !== false){
+				//Check if the User agent is the same in the DB as on the client
+				if(!$this->userModel->checkAgent($arrUser)){
+					$this->view->addFlash(\View\SessionView::UnknownAgent, \View::FlashClassError);
+					//$this->sessionModel->destroyLoginSession();
+				}
+				//Check the IP-address from DB and client
+				else if(!$this->userModel->checkIp($arrUser)){
+					$this->view->addFlash(\View\SessionView::UnknownIp, \View::FlashClassError);
+					//$this->sessionModel->destroyLoginSession();
+				}
+				else{
+					$boolSuccess = true;
+				}
+			}
+		}
+		else{
+			if($this->view->authCookieExists()){
+				if(!$this->view->signInWithCookie()){
+					$this->view->addFlash(\View\SessionView::CookieLoginFail, \View::FlashClassError);
+				}
+				else{
+					$this->view->addFlash(\View\SessionView::CookieLogin, \View::FlashClassSuccess);
+					$boolSuccess = true;
+				}
+			}
+				
+		}
+		return $boolSuccess;
+	}
+	
 	/*
 	*	If the user isn't signed in already a form will be renderd.
 	*/
 	public function newSession(){
-		if($this->sessionModel->loginSessionExists()){
+		if(!$this->checkSignIn()){
+			$this->view->Render($this->view->NewSession());
+		}
+		else{
 			$this->redirectTo('Session', 'successPage');
 		}
-		if($this->view->authCookieExists() && $this->view->signInWithCookie()){
-			$this->view->addFlash(\View\SessionView::CookieLogin, \View::FlashClassSuccess);
-			$this->redirectTo('Session', 'successPage');
-		}
-		$this->view->Render($this->view->NewSession());
 	}
+	
 	public function createSession(){
 		//Check that the form was posted
 		if($this->view->checkSignInTry()){
@@ -42,27 +76,32 @@ class SessionController extends \Controller{
 			$boolRemeber = $this->view->getKeepMeLoggedIn();
 			
 			//Make sure user provided username and password
-			if($strUserName === '' || $strPassword === ''){
-				$this->view->addFlash(\View\SessionView::EmptyUserNamePassword, \View::FlashClassError);
+			if($strUserName === ''){
+				$this->view->addFlash(\View\SessionView::EmptyUserName, \View::FlashClassError);
+				$this->redirectTo('Session');
+			}
+			if($strPassword === ''){
+				$this->view->addFlash(\View\SessionView::EmptyPassword, \View::FlashClassError);
 				$this->redirectTo('Session');
 			}
 			
+			//Get auser based on input from sign in form
 			$arrUser = $this->userModel->getUserByUserName($strUserName);
+			//Make sure a user was found and also that the password was correct
 			if($arrUser !== false && $this->userModel->auth($arrUser, $strPassword)){
+				//Create sign in-token. Update login time, user agent and ip on the user
+				$arrUser = $this->userModel->updateSignInData($arrUser);
+				//Create a persistent cookie if that was requested
 				if($boolRemeber){
-					$arrUser = $this->userModel->prepareUserDataForCookie($arrUser);
-					if($arrUser !== false){
-						$this->view->createAuthCookie($arrUser);
-						$this->view->addFlash(\View\SessionView::CookieCreated, \View::FlashClassSuccess);
-					}
+					$this->view->createAuthCookie($arrUser); 
 				}
-				$this->sessionModel->createLoginSession();
-				//After Sign in, let user know it was signed in and Redirect to desired page(controller#action);
-				$this->view->addFlash(\View\SessionView::LoginSuccess, \View::FlashClassSuccess);
+				//Finally set login-session that detemines a successfull login
+				$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
+				$this->view->addFlash(\View\SessionView::SignInSuccess, \View::FlashClassSuccess);
 				$this->redirectTo('Session', 'successPage');
 			}
+			//Could not auth user, either username and/or password was faulty. 
 			else{
-				//Could not Auth user, this means that either username or password was faulty. Redirect back to Sign in form
 				$this->view->addFlash(\View\SessionView::AuthFail, \View::FlashClassError);
 				$this->redirectTo('Session');
 			}
@@ -73,19 +112,31 @@ class SessionController extends \Controller{
 	
 	public function destroySession(){
 		$this->sessionModel->destroyLoginSession();
-		$this->view->destroyAuthCookie();
+		if($this->view->authCookieExists()){
+			$this->view->destroyAuthCookie();
+		}
+		$this->view->addFlash(\View\SessionView::SignOutSuccess, \View::FlashClassSuccess);
 		$this->redirectTo('Session');
 	}
 	
 	public function successPage(){
-		if(!$this->sessionModel->loginSessionExists()){
+		if(!$this->checkSignIn()){
 			$this->redirectTo('Session');
 		}
-		if(!$this->view->authCookieExists() || !$this->view->signInWithCookie()){
-			$this->view->addFlash(\View\SessionView::CookieLogin, \View::FlashClassSuccess);
+		else{
+			$this->view->render($this->view->successPage());
+		}
+		/*
+		//replace with "BeforeAction-function" later
+		if(!$this->sessionModel->loginSessionExists()){
+			if($this->view->authCookieExists() && !$this->view->signInWithCookie()){
+				$this->view->addFlash(\View\SessionView::CookieLoginFail, \View::FlashClassError);
+			}
 			$this->redirectTo('Session');
 		}
 		$this->view->render($this->view->successPage());
+		*/
+		
 	}
 	
 }

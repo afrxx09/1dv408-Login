@@ -20,18 +20,26 @@ p{
 }
 
 .flash{
-	padding:10px;
-	border:1px solid #666;
+	margin:10px 0;
 }
-.flash.flash-success{
-	background-color:#0f0;
+.flash-message{
+	padding:5px;
+	margin:5px 0;
+}
+.flash-message.flash-success{
+	background-color:#3d3;
 }
 
-.flash.flash-error{
-	background-color:#f00;
+.flash-message.flash-error{
+	background-color:#d33;
 }
-.flash.flash-warning{
-	background-color:#0ff;
+.flash-message.flash-warning{
+	background-color:#dd3;
+}
+.flash-message span.close{
+	float:right;
+	cursor:pointer;
+	color:#fff;
 }
 
 

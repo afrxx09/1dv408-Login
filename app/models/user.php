@@ -27,12 +27,18 @@ class UserModel extends \Model{
 	}
 	
 	public function auth($arrUser, $strPassword){
-		$p1 = $this->ScramblePassword($strPassword);
-		$p2 = $arrUser['password'];
-		return ($p1 === $p2) ? true : false;
+		return ($arrUser['password'] === $this->ScramblePassword($strPassword)) ? true : false;
 	}
 	
-	public function prepareUserDataForCookie($arrUser){
+	public function checkAgent($arrUser){
+		return ($arrUser['agent'] === $_SERVER['HTTP_USER_AGENT']) ? true : false;
+	}
+	
+	public function checkIp($arrUser){
+		return ($arrUser['ip'] === $_SERVER['REMOTE_ADDR']) ? true : false;
+	}
+	
+	public function updateSignInData($arrUser){
 		$arrUser['token'] = $this->GenerateToken();
 		$arrUser['ip'] = $_SERVER['REMOTE_ADDR'];
 		$arrUser['agent'] = $_SERVER['HTTP_USER_AGENT'];
@@ -67,5 +73,8 @@ class UserModel extends \Model{
 		return intval($arrUser['logintime']);
 	}
 	
+	public function getToken($arrUser){
+		return $arrUser['token'];
+	}
 }
 ?>

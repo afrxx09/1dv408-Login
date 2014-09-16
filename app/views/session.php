@@ -4,11 +4,17 @@ namespace view;
 
 class SessionView extends \View{
 	
-	const EmptyUserNamePassword = 'Username and password can not be empty!';
-	const LoginSuccess = 'Login successful!';
+	const EmptyUserName = 'Username can not be empty!';
+	const EmptyPassword = 'Password can not be empty!';
+	const SignInSuccess = 'Sign in successful!';
+	const SignOutSuccess = 'Sign out successfull';
 	const AuthFail = 'Incorrect Username or password.';
+	const UnknownIp = 'The IP-address is not known to this account, Sign out was forced(add IP to known list later).';
+	const UnknownAgent = 'Unknown user agent. Suspected session hijacking forced sign out.';
 	const CookieCreated = 'Cookie for persistent connection created.';
-	const CookieLogin = 'Successfully logged in with persistent cookie.';
+	const CookieDestroyed = 'Cookie for persistent connection destroyed';
+	const CookieLogin = 'Successfully signed in with persistent cookie.';
+	const CookieLoginFail = 'Could not Sign in with persistent cookie.';
 	
 	private $sessionModel;
 	private $userModel;
@@ -48,11 +54,13 @@ class SessionView extends \View{
 		$strCookieContent = $this->userModel->generateCookieContent($arrUser);
 		$intCookieTime = $this->userModel->GetLoginTime($arrUser) + $this->intCookieTime;
 		setcookie($this->strCookieName, $strCookieContent, $intCookieTime, '/');
+		$this->addFlash(self::CookieCreated, self::FlashClassWarning);
 	}
 	
 	public function destroyAuthCookie(){
 		unset($_COOKIE[$this->strCookieName]);
 		setcookie($this->strCookieName, '', time()-3600, '/');
+		$this->addFlash(self::CookieDestroyed, self::FlashClassWarning);
 	}
 	
 	public function getAuthCookie(){
@@ -68,7 +76,7 @@ class SessionView extends \View{
 		if($arrUser !== false){
 			$strCurrentVisitorIdentifier = $this->userModel->generateIdentifier();
 			if($strCurrentVisitorIdentifier === $strIdentifier && $this->userModel->getLoginTime($arrUser) === $strLoginTime){
-				$this->sessionModel->createLoginSession();
+				$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
 				return true;
 			}
 		}

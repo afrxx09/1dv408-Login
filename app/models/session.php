@@ -10,14 +10,18 @@ class SessionModel extends \Model{
 		parent::__construct();
 	}
 	
-	public function createLoginSession(){
-		$_SESSION[$this->strSessionKey] = true;
+	public function createLoginSession($strToken){
+		$_SESSION[$this->strSessionKey] = $strToken;
 	}
 	
 	public function loginSessionExists(){
-		return (isset($_SESSION[$this->strSessionKey]) && $_SESSION[$this->strSessionKey] === true) ? true : false;
+		return (isset($_SESSION[$this->strSessionKey])) ? true : false;
 	}
-
+	
+	public function getSessionToken(){
+		return $_SESSION[$this->strSessionKey];
+	}
+	
 	public function destroyLoginSession(){
 		unset($_SESSION[$this->strSessionKey]);
 	}
