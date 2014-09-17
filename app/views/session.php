@@ -19,8 +19,7 @@ class SessionView extends \View{
 	private $sessionModel;
 	private $userModel;
 	
-	//private $intCookieTime = 2592000; //60*60*24*30 = 30 days
-	private $intCookieTime = 20; //60*60*24*30 = 30 days
+	private $intCookieTime = 2592000; //60*60*24*30 = 30 days
 	private $strCookieName = 'auth';
 	
 	public function __construct($sessionModel, $userModel){
@@ -67,22 +66,10 @@ class SessionView extends \View{
 	public function getAuthCookie(){
 		return $_COOKIE[$this->strCookieName];
 	}
-
-	public function signInWithCookie(){
-		$arrCookie = explode(':', $this->getAuthCookie());
-		$strToken = $arrCookie[0];
-		$strIdentifier = $arrCookie[1];
-		$arrUser = $this->userModel->getUserByToken($strToken);
-		if($arrUser !== false){
-			$strCurrentVisitorIdentifier = $this->userModel->generateIdentifier();
-			if($strCurrentVisitorIdentifier === $strIdentifier && ($this->userModel->getCookieTime($arrUser) + $this->intCookieTime) > time()){
-				$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
-				return true;
-			}
-		}
-		return false;
+	
+	public function getAuthCookieTime(){
+		return $this->intCookieTime;
 	}
-
 	
 	//	HTML-for render
 	public function NewSession(){

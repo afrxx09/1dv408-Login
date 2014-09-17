@@ -28,12 +28,10 @@ class SessionController extends \Controller{
 				//Check if the User agent is the same in the DB as on the client
 				if(!$this->userModel->checkAgent($arrUser)){
 					$this->view->addFlash(\View\SessionView::UnknownAgent, \View::FlashClassError);
-					//$this->sessionModel->destroyLoginSession();
 				}
 				//Check the IP-address from DB and client
 				else if(!$this->userModel->checkIp($arrUser)){
 					$this->view->addFlash(\View\SessionView::UnknownIp, \View::FlashClassError);
-					//$this->sessionModel->destroyLoginSession();
 				}
 				else{
 					$boolSuccess = true;
@@ -110,6 +108,26 @@ class SessionController extends \Controller{
 		$this->redirectTo('Session');
 	}
 	
+	public function signInWithCookie(){
+		$arrCookie = explode(':', $this->view->getAuthCookie());
+		$strCookieToken = $arrCookie[0];
+		$strCookieIdentifier = $arrCookie[1];
+		$arrUser = $this->userModel->getUserByToken($strCookieToken);
+		if($arrUser !== false){
+			$strCurrentVisitorIdentifier = $this->userModel->generateIdentifier();
+			//Compare identification string from cookie to newly generated one
+			if($strCurrentVisitorIdentifier === $strCookieIdentifier){
+				//Check in database on user when cookie was created, add the amount of time the view saves cookies.(time cookie was created + 30 days)
+				//If the time right now is less than that(time created + 30 days) it's presumed that the cookie expire date has been tampered with
+				if($this->userModel->getCookieTime($arrUser) + $this->view->getAuthCookieTime()) > time()){
+					$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public function destroySession(){
 		$this->sessionModel->destroyLoginSession();
 		if($this->view->authCookieExists()){
@@ -126,17 +144,6 @@ class SessionController extends \Controller{
 		else{
 			$this->view->render($this->view->successPage());
 		}
-		/*
-		//replace with "BeforeAction-function" later
-		if(!$this->sessionModel->loginSessionExists()){
-			if($this->view->authCookieExists() && !$this->view->signInWithCookie()){
-				$this->view->addFlash(\View\SessionView::CookieLoginFail, \View::FlashClassError);
-			}
-			$this->redirectTo('Session');
-		}
-		$this->view->render($this->view->successPage());
-		*/
-		
 	}
 	
 }

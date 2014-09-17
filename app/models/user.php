@@ -7,7 +7,7 @@ class UserModel extends \Model{
 	private $userDAL;
 	
 	public function __construct(){
-		$this->userDAL = new \model\UserDAL();
+		$this->userDAL = new \model\dal\UserDAL();
 	}
 	
 	public function getUserByToken($strToken){

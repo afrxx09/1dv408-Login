@@ -79,20 +79,20 @@ class Router{
 function AutoLoadClasses($class){
 	$class = ltrim($class, '\\');
 	
-	$strNamespace = '';
-	$strClassName = '';
-	$strFilePath = '';
-	$intSeparatorPos = strpos($class, '\\');
-	if($intSeparatorPos !== false){
-		$strNamespace = strToLower(substr($class, 0, $intSeparatorPos));
-		$strClassName = strToLower(substr($class, $intSeparatorPos + 1));
-		$strFilePath = APP_DIR . $strNamespace . 's' . DS . str_replace($strNamespace, '', $strClassName) . '.php';
+	if(strripos($class, '\\') !== false){
+		$strClassName = strToLower(substr($class, strripos($class, '\\') + 1));
+		$arrNamespaces = explode('\\', $class, -1);
+		$strClassName = str_ireplace($arrNamespaces, '', $strClassName);
+		
+		$arrNamespaces[0] = $arrNamespaces[0] . 's';
+		$strNamespace = strToLower(implode(DS, $arrNamespaces));
+		
+		$strFilePath = APP_DIR . $strNamespace . DS . $strClassName . '.php';
 	}
 	else{
 		$strClassName = strToLower($class);
 		$strFilePath = LIB_DIR . $strClassName . '.php';
 	}
-	
 	if(!file_exists($strFilePath)){
 		return false;
 	}
