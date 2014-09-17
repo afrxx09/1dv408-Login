@@ -19,7 +19,8 @@ class SessionView extends \View{
 	private $sessionModel;
 	private $userModel;
 	
-	private $intCookieTime = 2592000; //60*60*24*30 = 30 days
+	//private $intCookieTime = 2592000; //60*60*24*30 = 30 days
+	private $intCookieTime = 20; //60*60*24*30 = 30 days
 	private $strCookieName = 'auth';
 	
 	public function __construct($sessionModel, $userModel){
@@ -52,7 +53,7 @@ class SessionView extends \View{
 	
 	public function createAuthCookie($arrUser){
 		$strCookieContent = $this->userModel->generateCookieContent($arrUser);
-		$intCookieTime = $this->userModel->GetLoginTime($arrUser) + $this->intCookieTime;
+		$intCookieTime = $this->userModel->GetCookieTime($arrUser) + $this->intCookieTime;
 		setcookie($this->strCookieName, $strCookieContent, $intCookieTime, '/');
 		$this->addFlash(self::CookieCreated, self::FlashClassWarning);
 	}
@@ -71,11 +72,10 @@ class SessionView extends \View{
 		$arrCookie = explode(':', $this->getAuthCookie());
 		$strToken = $arrCookie[0];
 		$strIdentifier = $arrCookie[1];
-		$strLoginTime = intval($arrCookie[2]);
 		$arrUser = $this->userModel->getUserByToken($strToken);
 		if($arrUser !== false){
 			$strCurrentVisitorIdentifier = $this->userModel->generateIdentifier();
-			if($strCurrentVisitorIdentifier === $strIdentifier && $this->userModel->getLoginTime($arrUser) === $strLoginTime){
+			if($strCurrentVisitorIdentifier === $strIdentifier && ($this->userModel->getCookieTime($arrUser) + $this->intCookieTime) > time()){
 				$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
 				return true;
 			}
@@ -109,6 +109,7 @@ class SessionView extends \View{
 					<div class="clear"></div>
 				</form>
 			</div>
+			' . $this->renderDateTime() . '
 		';
 	}
 	
@@ -119,8 +120,17 @@ class SessionView extends \View{
 			<div>
 				<p>Page for logged in users.</p>
 				<p><a href="' . ROOT_PATH . 'Session/DestroySession">Sign out</a></p>
-			</div>'
-		;
+			</div>
+			' . $this->renderDateTime() . '
+		';
+	}
+
+	private function renderDateTime(){
+		$arrDays = array('Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag');
+		$arrMonths = array('Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December');
+		$strDay = $arrDays[$date = date('N') - 1];
+		$strMonth = $arrMonths[$date = date('n') - 1];
+		return $strDay .', den ' . date('j') . ' ' . $strMonth . ' år ' . date('Y') . '. Klockan är [' . date('H:i:s') . '].';
 	}
 }
 ?>

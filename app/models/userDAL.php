@@ -65,7 +65,7 @@ class UserDAL{
 				user.token = '" . $db->Wash($arrUser['token']) . "',
 				user.ip = '" . $db->Wash($arrUser['ip']) . "',
 				user.agent = '" . $db->Wash($arrUser['agent']) . "',
-				user.logintime = '" . $db->Wash($arrUser['logintime']) . "'
+				user.cookietime = '" . $db->Wash($arrUser['cookietime']) . "'
 			WHERE
 				user.id = " . intval($arrUser['id']) . "
 		";

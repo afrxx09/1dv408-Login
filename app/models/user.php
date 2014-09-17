@@ -38,11 +38,13 @@ class UserModel extends \Model{
 		return ($arrUser['ip'] === $_SERVER['REMOTE_ADDR']) ? true : false;
 	}
 	
-	public function updateSignInData($arrUser){
+	public function updateSignInData($arrUser, $boolAddCookieTimeStamp){
 		$arrUser['token'] = $this->GenerateToken();
 		$arrUser['ip'] = $_SERVER['REMOTE_ADDR'];
 		$arrUser['agent'] = $_SERVER['HTTP_USER_AGENT'];
-		$arrUser['logintime'] = time();
+		if($boolAddCookieTimeStamp){
+			$arrUser['cookietime'] = time();
+		}
 		if($this->SaveUser($arrUser)){
 			return $arrUser;
 		}
@@ -59,7 +61,7 @@ class UserModel extends \Model{
 
 	public function generateCookieContent($arrUser){
 		$strIdentifier = $this->generateIdentifier();
-		$strCookieValue = $arrUser['token'] . ':' . $strIdentifier . ':' . $arrUser['logintime'];
+		$strCookieValue = $arrUser['token'] . ':' . $strIdentifier;
 		return $strCookieValue;
 	}
 	
@@ -75,6 +77,10 @@ class UserModel extends \Model{
 	
 	public function getToken($arrUser){
 		return $arrUser['token'];
+	}
+
+	public function getCookieTime($arrUser){
+		return intval($arrUser['cookietime']);
 	}
 }
 ?>

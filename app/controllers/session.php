@@ -90,10 +90,10 @@ class SessionController extends \Controller{
 			//Make sure a user was found and also that the password was correct
 			if($arrUser !== false && $this->userModel->auth($arrUser, $strPassword)){
 				//Create sign in-token. Update login time, user agent and ip on the user
-				$arrUser = $this->userModel->updateSignInData($arrUser);
+				$arrUser = $this->userModel->updateSignInData($arrUser, $boolRemeber);
 				//Create a persistent cookie if that was requested
 				if($boolRemeber){
-					$this->view->createAuthCookie($arrUser); 
+					$this->view->createAuthCookie($arrUser);
 				}
 				//Finally set login-session that detemines a successfull login
 				$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
