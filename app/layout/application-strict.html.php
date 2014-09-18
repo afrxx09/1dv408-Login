@@ -6,10 +6,14 @@
 		<!--{CSS}-->
 	</head>
 	<body>
-		<div id="wrap">
+		<div id="head">
 			<h1>Sign in system - afrxx09</h1>
-			<!--{HTMLBODY}-->
-			<!--{Include:_footer.html}-->
+		</div>
+		<div id="wrap">
+			<div id="content">
+				<!--{HTMLBODY}-->
+				<!--{Include:_footer.html}-->
+			</div>
 		</div>
 		<!--{JAVASCRIPT}-->
 	</body>

@@ -1,3 +1,4 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
 html *{
 	padding:0;
 	margin:0;
@@ -5,6 +6,7 @@ html *{
 
 body{
 	font-size: .9em;
+	font-family: 'Open Sans', sans-serif;
 }
 
 h1, h2, h3, h4, h5{
@@ -44,9 +46,16 @@ p{
 
 
 /*layout*/
+#head{
+	padding:10px;
+	background-color:#ddd;
+}
 #wrap{
 	width:960px;
 	margin:0 auto;
+}
+#content{
+
 }
 
 #SignInForm{
@@ -59,13 +68,36 @@ form .form-row{
 	width:100%;
 	padding:5px 0;
 }
+form label{
+	float:left;
+	width:150px;
+}
 
 form input[type="text"],
 form input[type="password"]{
+	float:left;
+	width:200px;
 	outline:none;
 	border:1px solid #666;
+	padding:3px 6px;
 }
 form input[type="text"]:focus,
 form input[type="password"]:focus{
+	border-color:#0f0;
+}
+
+form input[type="submit"]{
+	outline:none;
+	border:1px solid #000;
+	background-color:#ccc;
+	border-radius:2px;
+	padding:10px 30px;
+	color:#333;
+	font-weight:bold;
+}
+
+form input[type="submit"]:hover,
+form input[type="submit"]:active,
+form input[type="submit"]:focus{
 	border-color:#0f0;
 }

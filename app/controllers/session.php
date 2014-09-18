@@ -40,7 +40,7 @@ class SessionController extends \Controller{
 		}
 		else{
 			if($this->view->authCookieExists()){
-				if(!$this->view->signInWithCookie()){
+				if(!$this->signInWithCookie()){
 					$this->view->addFlash(\View\SessionView::CookieLoginFail, \View::FlashClassError);
 				}
 				else{
@@ -119,7 +119,7 @@ class SessionController extends \Controller{
 			if($strCurrentVisitorIdentifier === $strCookieIdentifier){
 				//Check in database on user when cookie was created, add the amount of time the view saves cookies.(time cookie was created + 30 days)
 				//If the time right now is less than that(time created + 30 days) it's presumed that the cookie expire date has been tampered with
-				if($this->userModel->getCookieTime($arrUser) + $this->view->getAuthCookieTime()) > time()){
+				if(($this->userModel->getCookieTime($arrUser) + $this->view->getAuthCookieTime()) > time()){
 					$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
 				}
 				return true;
@@ -146,5 +146,8 @@ class SessionController extends \Controller{
 		}
 	}
 	
+
+	/* Temporary Administrative functions */
+
 }
 ?>

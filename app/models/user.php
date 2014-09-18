@@ -82,5 +82,9 @@ class UserModel extends \Model{
 	public function getCookieTime($arrUser){
 		return intval($arrUser['cookietime']);
 	}
+
+	public function getUserName($arrUser){
+		return $arrUser['username'];
+	}
 }
 ?>

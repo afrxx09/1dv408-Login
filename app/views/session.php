@@ -101,8 +101,9 @@ class SessionView extends \View{
 	}
 	
 	public function successPage(){
+		$strUserName = $this->userModel->getUserName($this->userModel->GetUserByToken($this->sessionModel->getSessionToken()));
 		return '
-			<h2>Signed in as: ' . /*$this->helper->CurrentUser()*/'' . '</h2>
+			<h2>Signed in as: ' . $strUserName . '</h2>
 			' . $this->RenderFlash() .'
 			<div>
 				<p>Page for logged in users.</p>
