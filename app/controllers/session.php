@@ -23,14 +23,18 @@ class SessionController extends \Controller{
 	public function checkSignIn(){
 		$boolSuccess = false;
 		if($this->sessionModel->loginSessionExists()){
-			$arrUser = $this->userModel->getUserByToken($this->sessionModel->getSessionToken());
-			if($arrUser !== false){
+			//$arrUser = $this->userModel->getUserByToken($this->sessionModel->getSessionToken());
+			$user = $this->userModel->getUserByToken($this->sessionModel->getSessionToken());
+			//if($arrUser !== false){
+			if($user !== null){
 				//Check if the User agent is the same in the DB as on the client
-				if(!$this->userModel->checkAgent($arrUser)){
+				//if(!$this->userModel->checkAgent($arrUser)){
+				if(!$this->userModel->checkAgent($user)){
 					$this->view->addFlash(\View\SessionView::UnknownAgent, \View::FlashClassError);
 				}
 				//Check the IP-address from DB and client
-				else if(!$this->userModel->checkIp($arrUser)){
+				//else if(!$this->userModel->checkIp($arrUser)){
+				else if(!$this->userModel->checkIp($user)){
 					$this->view->addFlash(\View\SessionView::UnknownIp, \View::FlashClassError);
 				}
 				else{
@@ -84,17 +88,23 @@ class SessionController extends \Controller{
 			}
 			
 			//Get auser based on input from sign in form
-			$arrUser = $this->userModel->getUserByUserName($strUserName);
+			//$arrUser = $this->userModel->getUserByUserName($strUserName);
+			$user = $this->userModel->getUserByUserName($strUserName);
+			
 			//Make sure a user was found and also that the password was correct
-			if($arrUser !== false && $this->userModel->auth($arrUser, $strPassword)){
+			//if($arrUser !== false && $this->userModel->auth($arrUser, $strPassword)){
+			if($user !== null && $user->auth($strPassword)){
 				//Create sign in-token. Update login time, user agent and ip on the user
-				$arrUser = $this->userModel->updateSignInData($arrUser, $boolRemeber);
+				//$arrUser = $this->userModel->updateSignInData($arrUser, $boolRemeber);
+				$user->updateSignInData($this->userModel->GenerateToken(), $boolRemeber);
+				$this->userModel->saveUser($user);
 				//Create a persistent cookie if that was requested
 				if($boolRemeber){
-					$this->view->createAuthCookie($arrUser);
+					//$this->view->createAuthCookie($arrUser);
+					$this->view->createAuthCookie($user);
 				}
 				//Finally set login-session that detemines a successfull login
-				$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
+				$this->sessionModel->createLoginSession($user->getToken());
 				$this->view->addFlash(\View\SessionView::SignInSuccess, \View::FlashClassSuccess);
 				$this->redirectTo('Session', 'successPage');
 			}
@@ -112,15 +122,17 @@ class SessionController extends \Controller{
 		$arrCookie = explode(':', $this->view->getAuthCookie());
 		$strCookieToken = $arrCookie[0];
 		$strCookieIdentifier = $arrCookie[1];
-		$arrUser = $this->userModel->getUserByToken($strCookieToken);
-		if($arrUser !== false){
+		//$arrUser = $this->userModel->getUserByToken($strCookieToken);
+		$user = $this->userModel->getUserByToken($strCookieToken);
+		//if($arrUser !== false){
+		if($user !== null){
 			$strCurrentVisitorIdentifier = $this->userModel->generateIdentifier();
 			//Compare identification string from cookie to newly generated one
 			if($strCurrentVisitorIdentifier === $strCookieIdentifier){
 				//Check in database on user when cookie was created, add the amount of time the view saves cookies.(time cookie was created + 30 days)
 				//If the time right now is less than that(time created + 30 days) it's presumed that the cookie expire date has been tampered with
-				if(($this->userModel->getCookieTime($arrUser) + $this->view->getAuthCookieTime()) > time()){
-					$this->sessionModel->createLoginSession($this->userModel->getToken($arrUser));
+				if(($user->getCookieTime() + $this->view->getAuthCookieTime()) > time()){
+					$this->sessionModel->createLoginSession($user->getToken());
 				}
 				return true;
 			}

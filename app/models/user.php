@@ -22,33 +22,16 @@ class UserModel extends \Model{
 		return $this->userDAL->GetUserByUserName($strUserName);
 	}
 	
-	public function saveUser($arrUser){
-		return ($this->userDAL->SaveUser($arrUser)) ? $arrUser : null;
+	public function saveUser($user){
+		return ($this->userDAL->SaveUser($user)) ? true : false;
 	}
 	
-	public function auth($arrUser, $strPassword){
-		return ($arrUser['password'] === $this->ScramblePassword($strPassword)) ? true : false;
+	public function checkAgent($user){
+		return ($user->getAgent() === $_SERVER['HTTP_USER_AGENT']) ? true : false;
 	}
 	
-	public function checkAgent($arrUser){
-		return ($arrUser['agent'] === $_SERVER['HTTP_USER_AGENT']) ? true : false;
-	}
-	
-	public function checkIp($arrUser){
-		return ($arrUser['ip'] === $_SERVER['REMOTE_ADDR']) ? true : false;
-	}
-	
-	public function updateSignInData($arrUser, $boolAddCookieTimeStamp){
-		$arrUser['token'] = $this->GenerateToken();
-		$arrUser['ip'] = $_SERVER['REMOTE_ADDR'];
-		$arrUser['agent'] = $_SERVER['HTTP_USER_AGENT'];
-		if($boolAddCookieTimeStamp){
-			$arrUser['cookietime'] = time();
-		}
-		if($this->SaveUser($arrUser)){
-			return $arrUser;
-		}
-		return false;
+	public function checkIp($user){
+		return ($user->getIp() === $_SERVER['REMOTE_ADDR']) ? true : false;
 	}
 	
 	public function generateToken(){
@@ -59,32 +42,10 @@ class UserModel extends \Model{
 		return sha1($_SERVER['HTTP_USER_AGENT'] . $_SERVER['REMOTE_ADDR']);
 	}
 
-	public function generateCookieContent($arrUser){
+	public function generateCookieContent($user){
 		$strIdentifier = $this->generateIdentifier();
-		$strCookieValue = $arrUser['token'] . ':' . $strIdentifier;
+		$strCookieValue = $user->getToken() . ':' . $strIdentifier;
 		return $strCookieValue;
-	}
-	
-	public function scramblePassword($strPassword){
-		//Will make more complex if there is time.
-		$salt = 'asd123';
-		return sha1($salt . $strPassword);
-	}
-	
-	public function getLoginTime($arrUser){
-		return intval($arrUser['logintime']);
-	}
-	
-	public function getToken($arrUser){
-		return $arrUser['token'];
-	}
-
-	public function getCookieTime($arrUser){
-		return intval($arrUser['cookietime']);
-	}
-
-	public function getUserName($arrUser){
-		return $arrUser['username'];
 	}
 }
 ?>

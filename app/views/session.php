@@ -50,9 +50,9 @@ class SessionView extends \View{
 		return isset($_COOKIE[$this->strCookieName]);
 	}
 	
-	public function createAuthCookie($arrUser){
-		$strCookieContent = $this->userModel->generateCookieContent($arrUser);
-		$intCookieTime = $this->userModel->GetCookieTime($arrUser) + $this->intCookieTime;
+	public function createAuthCookie($user){
+		$strCookieContent = $this->userModel->generateCookieContent($user);
+		$intCookieTime = $user->getCookieTime() + $this->intCookieTime;
 		setcookie($this->strCookieName, $strCookieContent, $intCookieTime, '/');
 		$this->addFlash(self::CookieCreated, self::FlashClassWarning);
 	}
@@ -96,24 +96,24 @@ class SessionView extends \View{
 					<div class="clear"></div>
 				</form>
 			</div>
-			' . $this->renderDateTime() . '
+			' . $this->renderDateTimeString() . '
 		';
 	}
 	
 	public function successPage(){
-		$strUserName = $this->userModel->getUserName($this->userModel->GetUserByToken($this->sessionModel->getSessionToken()));
+		$user = $this->userModel->GetUserByToken($this->sessionModel->getSessionToken());
 		return '
-			<h2>Signed in as: ' . $strUserName . '</h2>
+			<h2>Signed in as: ' . $user->getUsername() . '</h2>
 			' . $this->RenderFlash() .'
 			<div>
 				<p>Page for logged in users.</p>
 				<p><a href="' . ROOT_PATH . 'Session/DestroySession">Sign out</a></p>
 			</div>
-			' . $this->renderDateTime() . '
+			' . $this->renderDateTimeString() . '
 		';
 	}
 
-	private function renderDateTime(){
+	private function renderDateTimeString(){
 		$arrDays = array('Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag', 'Söndag');
 		$arrMonths = array('Januari', 'Februari', 'Mars', 'April', 'Maj', 'Juni', 'Juli', 'Augusti', 'September', 'Oktober', 'November', 'December');
 		$strDay = $arrDays[$date = date('N') - 1];

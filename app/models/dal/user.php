@@ -20,7 +20,17 @@ class UserDAL{
 			LIMIT
 				1
 		";
-		return $db->GetRow($strSql);
+		$r = $db->GetRow($strSql);
+		if($r ==! false){
+			try{
+				$user = new \model\dobj\User($r);
+				return $user;
+			}
+			catch(\Exception $e){
+				//Empty
+			} 
+		}
+		return null;
 	}
 
 	public function getUserByToken($strToken){
@@ -35,8 +45,17 @@ class UserDAL{
 			LIMIT
 				1
 		";
-		$result = $db->GetRow($strSql);
-		return $result;
+		$r = $db->GetRow($strSql);
+		if($r ==! false){
+			try{
+				$user = new \model\dobj\User($r);
+				return $user;
+			}
+			catch(\Exception $e){
+				//Empty
+			} 
+		}
+		return null;
 	}
 
 	public function getUserByUserName($strUserName){
@@ -51,23 +70,33 @@ class UserDAL{
 			LIMIT
 				1
 		";
-		return $db->GetRow($strSql);
+		$r = $db->GetRow($strSql);
+		if($r ==! false){
+			try{
+				$user = new \model\dobj\User($r);
+				return $user;
+			}
+			catch(\Exception $e){
+				//Empty
+			} 
+		}
+		return null;
 	}
 
-	public function saveUser($arrUser){
+	public function saveUser($user){
 		$db = new \db();
 		$strSql = "
 			UPDATE
 				user
 			SET
-				user.username = '" . $db->Wash($arrUser['username']) . "',
-				user.password = '" . $db->Wash($arrUser['password']) . "',
-				user.token = '" . $db->Wash($arrUser['token']) . "',
-				user.ip = '" . $db->Wash($arrUser['ip']) . "',
-				user.agent = '" . $db->Wash($arrUser['agent']) . "',
-				user.cookietime = '" . $db->Wash($arrUser['cookietime']) . "'
+				user.username = '" . $db->Wash($user->getUsername()) . "',
+				user.password = '" . $db->Wash($user->getPassword()) . "',
+				user.token = '" . $db->Wash($user->getToken()) . "',
+				user.ip = '" . $db->Wash($user->getIp()) . "',
+				user.agent = '" . $db->Wash($user->getAgent()) . "',
+				user.cookietime = '" . $db->Wash($user->getCookieTime()) . "'
 			WHERE
-				user.id = " . intval($arrUser['id']) . "
+				user.id = " . intval($user->getId()) . "
 		";
 		return $db->Query($strSql);
 	}
