@@ -2,7 +2,7 @@
 
 namespace model\dal;
 
-class UserDAL{
+class LoginDAL{
 	
 	public function __construct(){
 
@@ -81,24 +81,6 @@ class UserDAL{
 			} 
 		}
 		return null;
-	}
-
-	public function saveUser($user){
-		$db = new \db();
-		$strSql = "
-			UPDATE
-				user
-			SET
-				user.username = '" . $db->Wash($user->getUsername()) . "',
-				user.password = '" . $db->Wash($user->getPassword()) . "',
-				user.token = '" . $db->Wash($user->getToken()) . "',
-				user.ip = '" . $db->Wash($user->getIp()) . "',
-				user.agent = '" . $db->Wash($user->getAgent()) . "',
-				user.cookietime = '" . $db->Wash($user->getCookieTime()) . "'
-			WHERE
-				user.id = " . intval($user->getId()) . "
-		";
-		return $db->Query($strSql);
 	}
 
 }

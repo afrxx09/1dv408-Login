@@ -10,7 +10,7 @@ define('DB_PASSWORD', 'lnustudent');
 define('APPLICATION_HTML_STANDARD', 'strict');
 define('APPLICATION_TITLE', 'Log in');
 
-define('DEFAULT_CONTROLLER', 'Session');
+define('DEFAULT_CONTROLLER', 'Login');
 define('DEFAULT_ACTION', 'NewSession');
 
 /*

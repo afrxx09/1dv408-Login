@@ -22,6 +22,32 @@ class User{
 		$this->setAgent($arrUser['agent']);
 		$this->setCookieTime($arrUser['cookietime']);
 	}
+	//DB-functions
+	public function save(){
+		$db = new \db();
+		$strSql = "
+			UPDATE
+				user
+			SET
+				user.username = '" . $db->Wash($this->getUsername()) . "',
+				user.password = '" . $db->Wash($this->getPassword()) . "',
+				user.token = '" . $db->Wash($this->getToken()) . "',
+				user.ip = '" . $db->Wash($this->getIp()) . "',
+				user.agent = '" . $db->Wash($this->getAgent()) . "',
+				user.cookietime = '" . $db->Wash($this->getCookieTime()) . "'
+			WHERE
+				user.id = " . intval($this->getId()) . "
+		";
+		return $db->Query($strSql);
+	}
+
+	public function create(){
+		//
+	}
+
+	public function destroy(){
+		//
+	}
 	
 	//Getters
 	public function getId(){
@@ -76,14 +102,7 @@ class User{
 		return sha1($salt . $strPassword);
 	}
 	
-	public function updateSignInData($strToken, $boolAddCookieTimeStamp){
-		$this->setToken($strToken);
-		$this->setIp($_SERVER['REMOTE_ADDR']);
-		$this->setAgent($_SERVER['HTTP_USER_AGENT']);
-		if($boolAddCookieTimeStamp){
-			$this->setCookieTime(time());
-		}
-	}
+	
 	
 }
 ?>

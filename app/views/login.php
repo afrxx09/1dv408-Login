@@ -2,7 +2,7 @@
 
 namespace view;
 
-class SessionView extends \View{
+class LoginView extends \View{
 	
 	const EmptyUserName = 'Username can not be empty!';
 	const EmptyPassword = 'Password can not be empty!';
@@ -16,16 +16,15 @@ class SessionView extends \View{
 	const CookieLogin = 'Successfully signed in with persistent cookie.';
 	const CookieLoginFail = 'Could not Sign in with persistent cookie.';
 	
-	private $sessionModel;
-	private $userModel;
+	private $loginModel;
 	
-	private $intCookieTime = 2592000; //60*60*24*30 = 30 days
+	//private $intCookieTime = 2592000; //60*60*24*30 = 30 days
+	private $intCookieTime = 20; //60*60*24*30 = 30 days
 	private $strCookieName = 'auth';
 	
-	public function __construct($sessionModel, $userModel){
+	public function __construct($loginModel){
 		parent::__construct();
-		$this->sessionModel = $sessionModel;
-		$this->userModel = $userModel;
+		$this->loginModel = $loginModel;
 	}
 	
 	//	Get $_POST-values
@@ -51,7 +50,7 @@ class SessionView extends \View{
 	}
 	
 	public function createAuthCookie($user){
-		$strCookieContent = $this->userModel->generateCookieContent($user);
+		$strCookieContent = $this->loginModel->generateCookieContent($user);
 		$intCookieTime = $user->getCookieTime() + $this->intCookieTime;
 		setcookie($this->strCookieName, $strCookieContent, $intCookieTime, '/');
 		$this->addFlash(self::CookieCreated, self::FlashClassWarning);
@@ -77,7 +76,7 @@ class SessionView extends \View{
 			<h2>Not signed in</h2>
 			' . $this->RenderFlash() .'
 			<div id="SignInForm">
-				<form method="post" action="' . ROOT_PATH . 'Session/CreateSession">
+				<form method="post" action="' . ROOT_PATH . 'Login/CreateSession">
 					<div class="form-row">
 						<label for="username">Username</label>
 						<input type="text" name="username" id="username" />
@@ -101,13 +100,13 @@ class SessionView extends \View{
 	}
 	
 	public function successPage(){
-		$user = $this->userModel->GetUserByToken($this->sessionModel->getSessionToken());
+		$user = $this->loginModel->getUserByToken($this->loginModel->getSessionToken());
 		return '
 			<h2>Signed in as: ' . $user->getUsername() . '</h2>
 			' . $this->RenderFlash() .'
 			<div>
 				<p>Page for logged in users.</p>
-				<p><a href="' . ROOT_PATH . 'Session/DestroySession">Sign out</a></p>
+				<p><a href="' . ROOT_PATH . 'Login/DestroySession">Sign out</a></p>
 			</div>
 			' . $this->renderDateTimeString() . '
 		';
