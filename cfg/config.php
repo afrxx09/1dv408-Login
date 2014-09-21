@@ -11,7 +11,7 @@ define('APPLICATION_HTML_STANDARD', 'strict');
 define('APPLICATION_TITLE', 'Log in');
 
 define('DEFAULT_CONTROLLER', 'Login');
-define('DEFAULT_ACTION', 'NewSession');
+define('DEFAULT_ACTION', 'add');
 
 /*
 	Shortcuts to commonly used directories

@@ -1,5 +1,11 @@
 <?php
-
+/**
+*	Database object representing a user
+*
+*	# Reponsible for inserting and updating it self in database
+*	# Methods for Password-scrambling and authentication
+*	# Setter and getters 
+*/
 namespace model\dobj;
 
 class User{
@@ -33,7 +39,7 @@ class User{
 		$this->setAgent($arrUser['agent']);
 		$this->setCookieTime($arrUser['cookietime']);
 	}
-	//DB-functions
+	
 	public function save(){
 		$db = new \db();
 		$strSql = "

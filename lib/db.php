@@ -1,5 +1,8 @@
 <?php
-
+/**
+*	Help class to make Database interaction easier
+*
+*/
 class db{
 	private $arrError = array();
 	protected static $con;

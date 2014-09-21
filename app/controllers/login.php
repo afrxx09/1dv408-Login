@@ -1,5 +1,9 @@
 <?php
-
+/**
+*	Controller class for Loggin in.
+*	@actions	: index, add, create, destroy, success
+*	@methods	: checkSignIn, signInWithCookie
+*/
 namespace controller;
 
 class LoginController extends \Controller{
@@ -13,24 +17,29 @@ class LoginController extends \Controller{
 		$this->view = new \view\LoginView($this->loginModel);
 	}
 	
-	/*Index is the default function for all controllers, this redirects the default to NewSession instead.*/
+	/**
+	*	Index is the default function for all controllers, this redirects the default to NewSession instead.
+	*/
 	public function index(){
-		$this->newSession();
+		$this->add();
 	}
 	
-	/*
-	*	If the user isn't signed in already a form will be renderd.
+	/**
+	*	Controller action for rendering login-form.
 	*/
-	public function newSession(){
+	public function add(){
 		if(!$this->checkSignIn()){
-			$this->view->Render($this->view->NewSession());
+			$this->view->Render($this->view->add());
 		}
 		else{
-			$this->redirectTo('Login', 'successPage');
+			$this->redirectTo('Login', 'success');
 		}
 	}
 	
-	public function createSession(){
+	/**
+	*	Conroller action that login-form posts to
+	*/
+	public function create(){
 		//Check that the form was posted
 		if($this->view->checkSignInTry()){
 			//Get all necessary variables from sign in form
@@ -59,7 +68,7 @@ class LoginController extends \Controller{
 					//Finally set login-session that detemines a successfull login
 					$this->loginModel->createLoginSession($user->getToken());
 					$this->view->addFlash(\View\LoginView::SignInSuccess, \View::FlashClassSuccess);
-					$this->redirectTo('Login', 'successPage');
+					$this->redirectTo('Login', 'success');
 				}
 				else{
 					$this->view->addFlash(\View\LoginView::AuthFail, \View::FlashClassError);
@@ -76,6 +85,33 @@ class LoginController extends \Controller{
 		$this->redirectTo('Login');
 	}
 	
+	/**
+	*	Controller action for signing out
+	*/
+	public function destroy(){
+		$this->loginModel->destroyLoginSession();
+		if($this->view->authCookieExists()){
+			$this->view->destroyAuthCookie();
+		}
+		$this->view->addFlash(\View\LoginView::SignOutSuccess, \View::FlashClassSuccess);
+		$this->redirectTo('Login');
+	}
+	
+	/**
+	*	Controller action for rendering successfull login page
+	*/
+	public function success(){
+		if(!$this->checkSignIn()){
+			$this->redirectTo('Login');
+		}
+		else{
+			$this->view->render($this->view->successPage());
+		}
+	}
+	
+	/**
+	*	Method to check if a user is signed in or has a persistent auth cookie that can be used to sign in
+	*/
 	public function checkSignIn(){
 		$boolSuccess = false;
 		if($this->loginModel->loginSessionExists()){
@@ -109,6 +145,9 @@ class LoginController extends \Controller{
 		return $boolSuccess;
 	}
 	
+	/**
+	*	Method for signing in a user with an auth cookie
+	*/
 	public function signInWithCookie(){
 		$arrCookie = explode(':', $this->view->getAuthCookie());
 		$strCookieToken = $arrCookie[0];
@@ -129,22 +168,6 @@ class LoginController extends \Controller{
 		return false;
 	}
 	
-	public function destroySession(){
-		$this->loginModel->destroyLoginSession();
-		if($this->view->authCookieExists()){
-			$this->view->destroyAuthCookie();
-		}
-		$this->view->addFlash(\View\LoginView::SignOutSuccess, \View::FlashClassSuccess);
-		$this->redirectTo('Login');
-	}
 	
-	public function successPage(){
-		if(!$this->checkSignIn()){
-			$this->redirectTo('Login');
-		}
-		else{
-			$this->view->render($this->view->successPage());
-		}
-	}
 }
 ?>

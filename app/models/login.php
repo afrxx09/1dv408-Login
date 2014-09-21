@@ -1,5 +1,12 @@
 <?php
-
+/**
+*	Model class for Login controller.
+*
+*	# Session management.
+*	# reads $_SERVER variable
+*	# Database contact via DAL class to fetch user(s)
+*	# Business logic for creating cookie and session information
+*/
 namespace model;
 
 class LoginModel extends \Model{
@@ -12,7 +19,9 @@ class LoginModel extends \Model{
 		$this->loginDAL = new \model\dal\LoginDAL();
 	}
 	
-	//Session-stuff
+	/**
+	*	Session-stuff
+	*/
 	public function createLoginSession($strToken){
 		$_SESSION[$this->strSessionKey] = $strToken;
 	}
@@ -29,7 +38,9 @@ class LoginModel extends \Model{
 		unset($_SESSION[$this->strSessionKey]);
 	}
 
-	//Get user objects in various ways
+	/**
+	*	Get user objects in various ways
+	*/
 	public function getUserByToken($strToken){
 		return $this->loginDAL->GetUserByToken($strToken);
 	}
@@ -42,7 +53,9 @@ class LoginModel extends \Model{
 		return $this->loginDAL->GetUserByUserName($strUserName);
 	}
 
-	//
+	/**
+	*	Business logic for Session and cookie data
+	*/
 	public function checkAgent($user){
 		return ($user->getAgent() === $_SERVER['HTTP_USER_AGENT']) ? true : false;
 	}

@@ -1,5 +1,9 @@
 <?php
-
+/**
+*	DAL-class for Login model
+*
+*	# Fetches users from database and returns them as user objects in various ways
+*/
 namespace model\dal;
 
 class LoginDAL{

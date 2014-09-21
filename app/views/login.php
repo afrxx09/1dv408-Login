@@ -1,9 +1,19 @@
 <?php
-
+/**
+*	View class for Login controller.
+*
+*	# Auth cookie manager.
+*	# Error-, warning- and notification-messages
+*	# HTML-for rendering controller action pages
+*	# Getters for $_POST-variables from login form
+*/
 namespace view;
 
 class LoginView extends \View{
 	
+	/**
+	*	Constants for keeping track of error messages, warnings and notifications
+	*/
 	const EmptyUserName = 'Username can not be empty!';
 	const NotAllowedCharsUsername = 'Detected unallowed special characters in username. (allowed characters: a-z, A-Z, 0-9)';
 	const UsernameLengthError = 'Username must be between 4 and 20 characters';
@@ -22,21 +32,28 @@ class LoginView extends \View{
 	const CookieLogin = 'Successfully signed in with persistent cookie.';
 	const CookieLoginFail = 'Could not Sign in with persistent cookie.';
 	
-	private $loginModel;
-	
 	private $intCookieTime = 2592000; //60*60*24*30 = 30 days
 	private $strCookieName = 'auth';
+	
+	private $loginModel;
 	
 	public function __construct($loginModel){
 		parent::__construct();
 		$this->loginModel = $loginModel;
 	}
 	
-	//	Get $_POST-values
+	/**
+	*	Basic check to see if the login form was posted or not, i.e. not a GET-request.
+	*	@return bool
+	*/
 	public function checkSignInTry(){
 		return isset($_POST['username']);
 	}
-
+	
+	/**
+	*	Returns username from login form if present and correct format 
+	*	@return string "username"
+	*/
 	public function getSignInUserName(){
 		if(!isset($_POST['username']) || $_POST['username'] === ''){
 			throw new \Exception(self::EmptyUserName);
@@ -51,6 +68,10 @@ class LoginView extends \View{
 		return $strUsername;
 	}
 
+	/**
+	*	Returns password from login form if present and correct format 
+	*	@return string "password"
+	*/
 	public function getSignInPassword(){
 		if(!isset($_POST['password']) || $_POST['password'] === ''){
 			throw new \Exception(self::EmptyPassword);
@@ -64,16 +85,27 @@ class LoginView extends \View{
 		}
 		return $strPassword;
 	}
-
+	
+	/**
+	*	Check if user wished for persitent login
+	*	@return bool
+	*/
 	public function getKeepMeLoggedIn(){
 		return isset($_POST['keep-me-signed-in']);
 	}
 	
-	//	Cookie stuff
+	/**
+	*	Check if there is an autgh cookie present
+	*	@return bool
+	*/
 	public function authCookieExists(){
 		return isset($_COOKIE[$this->strCookieName]);
 	}
 	
+	/**
+	*	Creates an auth cookie based on user data.
+	*	@return void
+	*/
 	public function createAuthCookie($user){
 		$strCookieContent = $this->loginModel->generateCookieContent($user);
 		$intCookieTime = $user->getCookieTime() + $this->intCookieTime;
@@ -81,22 +113,36 @@ class LoginView extends \View{
 		$this->addFlash(self::CookieCreated, self::FlashClassWarning);
 	}
 	
+	/**
+	*	Destroys auth cookie
+	*	@return void
+	*/
 	public function destroyAuthCookie(){
 		unset($_COOKIE[$this->strCookieName]);
 		setcookie($this->strCookieName, '', time()-3600, '/');
 		$this->addFlash(self::CookieDestroyed, self::FlashClassWarning);
 	}
 	
+	/**
+	*	Returns the value of auth cookie
+	*	@return string
+	*/
 	public function getAuthCookie(){
 		return $_COOKIE[$this->strCookieName];
 	}
 	
+	/**
+	*	Return the amount of seconds an auth cookie is saved
+	*	@return bool
+	*/
 	public function getAuthCookieTime(){
 		return $this->intCookieTime;
 	}
 	
-	//	HTML-for render
-	public function NewSession(){
+	/**
+	*	Render method for controller action "add"
+	*/
+	public function add(){
 		return '
 			<h2>Not signed in</h2>
 			' . $this->RenderFlash() .'
@@ -124,7 +170,10 @@ class LoginView extends \View{
 		';
 	}
 	
-	public function successPage(){
+	/**
+	*	Render method for controller action "success"
+	*/
+	public function success(){
 		$user = $this->loginModel->getUserByToken($this->loginModel->getSessionToken());
 		return '
 			<h2>Signed in as: ' . $user->getUsername() . '</h2>

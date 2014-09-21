@@ -83,7 +83,6 @@ function AutoLoadClasses($class){
 		$strClassName = strToLower(substr($class, strripos($class, '\\') + 1));
 		$arrNamespaces = explode('\\', $class, -1);
 		$strClassName = str_ireplace($arrNamespaces, '', $strClassName);
-		//$strClassName = $strClassName;
 		
 		$arrNamespaces[0] = $arrNamespaces[0] . 's';
 		$strNamespace = strToLower(implode(DS, $arrNamespaces));
