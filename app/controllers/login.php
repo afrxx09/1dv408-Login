@@ -18,40 +18,6 @@ class LoginController extends \Controller{
 		$this->newSession();
 	}
 	
-	public function checkSignIn(){
-		$boolSuccess = false;
-		if($this->loginModel->loginSessionExists()){
-			$user = $this->loginModel->getUserByToken($this->loginModel->getSessionToken());
-			if($user !== null){
-				//Check if the User agent is the same in the DB as on the client
-				if(!$this->loginModel->checkAgent($user)){
-					$this->view->addFlash(\View\LoginView::UnknownAgent, \View::FlashClassError);
-				}
-				//Check the IP-address from DB and client
-				//else if(!$this->loginModel->checkIp($arrUser)){
-				else if(!$this->loginModel->checkIp($user)){
-					$this->view->addFlash(\View\LoginView::UnknownIp, \View::FlashClassError);
-				}
-				else{
-					$boolSuccess = true;
-				}
-			}
-		}
-		else{
-			if($this->view->authCookieExists()){
-				if(!$this->signInWithCookie()){
-					$this->view->addFlash(\View\LoginView::CookieLoginFail, \View::FlashClassError);
-				}
-				else{
-					$this->view->addFlash(\View\LoginView::CookieLogin, \View::FlashClassSuccess);
-					$boolSuccess = true;
-				}
-			}
-				
-		}
-		return $boolSuccess;
-	}
-	
 	/*
 	*	If the user isn't signed in already a form will be renderd.
 	*/
@@ -68,21 +34,17 @@ class LoginController extends \Controller{
 		//Check that the form was posted
 		if($this->view->checkSignInTry()){
 			//Get all necessary variables from sign in form
-			$strUserName = $this->view->getSignInUserName();
-			$strPassword = $this->view->getSignInPassword();
-			$boolRemeber = $this->view->getKeepMeLoggedIn();
-			
-			//Make sure user provided username and password
-			if($strUserName === ''){
-				$this->view->addFlash(\View\LoginView::EmptyUserName, \View::FlashClassError);
-				$this->redirectTo('Login');
+			try{
+				$strUserName = $this->view->getSignInUserName();
+				$strPassword = $this->view->getSignInPassword();
+				$boolRemeber = $this->view->getKeepMeLoggedIn();
 			}
-			if($strPassword === ''){
-				$this->view->addFlash(\View\LoginView::EmptyPassword, \View::FlashClassError);
+			catch(\Exception $e){
+				$this->view->addFlash($e->getMessage(), \View::FlashClassError);
 				$this->redirectTo('Login');
 			}
 			
-			//Get auser based on input from sign in form
+			//Get user based on input from sign in form
 			$user = $this->loginModel->getUserByUserName($strUserName);
 			
 			//Make sure a user was found and also that the password was correct
@@ -112,6 +74,39 @@ class LoginController extends \Controller{
 		}
 		//if the login-form was not posted, url was changed manually so redirect to Sign in form
 		$this->redirectTo('Login');
+	}
+	
+	public function checkSignIn(){
+		$boolSuccess = false;
+		if($this->loginModel->loginSessionExists()){
+			$user = $this->loginModel->getUserByToken($this->loginModel->getSessionToken());
+			if($user !== null){
+				//Check if the User agent is the same in the DB as on the client
+				if(!$this->loginModel->checkAgent($user)){
+					$this->view->addFlash(\View\LoginView::UnknownAgent, \View::FlashClassError);
+				}
+				//Check the IP-address from DB and client
+				else if(!$this->loginModel->checkIp($user)){
+					$this->view->addFlash(\View\LoginView::UnknownIp, \View::FlashClassError);
+				}
+				else{
+					$boolSuccess = true;
+				}
+			}
+		}
+		else{
+			if($this->view->authCookieExists()){
+				if(!$this->signInWithCookie()){
+					$this->view->addFlash(\View\LoginView::CookieLoginFail, \View::FlashClassError);
+				}
+				else{
+					$this->view->addFlash(\View\LoginView::CookieLogin, \View::FlashClassSuccess);
+					$boolSuccess = true;
+				}
+			}
+				
+		}
+		return $boolSuccess;
 	}
 	
 	public function signInWithCookie(){
@@ -151,9 +146,5 @@ class LoginController extends \Controller{
 			$this->view->render($this->view->successPage());
 		}
 	}
-	
-
-	/* Temporary Administrative functions */
-
 }
 ?>

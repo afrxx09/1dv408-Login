@@ -12,9 +12,20 @@ class User{
 	private $strAgent;
 	private $intCookieTime;
 	
-	public function __construct($arrUser){
+	public function __construct($arrUser = null){
+		if($arrUser !== null){
+			try{
+				$this->setAll($arrUser);
+			}
+			catch(\Exception $e){
+				return null;
+			}
+		}
+	}
+	
+	private function setAll($arrUser){
 		$this->intId = $arrUser['id'];
-		
+				
 		$this->setUsername($arrUser['username']);
 		$this->setPassword($arrUser['password']);
 		$this->setToken($arrUser['token']);
@@ -42,7 +53,24 @@ class User{
 	}
 
 	public function create(){
-		//
+		$db = new \db();
+		$strSql = "
+			INSERT INTO
+				user (username, password)
+			VALUES (
+				'" . $db->Wash($this->getUsername()) . "',
+				'" . $db->Wash($this->getPassword()) . "'
+			)
+		";
+		$result = $db->Query($strSql);
+		
+		if($result !== false){
+			$strSql = "SELECT LAST_INSERT_ID()";
+			$this->intId = intval($db->getScalar($strSql));
+			return true;
+		}
+		return false;
+		
 	}
 
 	public function destroy(){
@@ -93,16 +121,18 @@ class User{
 	
 	//Methods
 	public function auth($strPassword){
-		return ($this->getPassword() === $this->ScramblePassword($strPassword)) ? true : false;
+		return ($this->getPassword() === $this->getScrambledPassword($strPassword)) ? true : false;
 	}
 	
-	//Will make more complex if there is time.
-	public function scramblePassword($strPassword){
+	private function getScrambledPassword($strPassword){
+		//Will make more complex if there is time.
 		$salt = 'asd123';
 		return sha1($salt . $strPassword);
 	}
 	
-	
+	public function scramblePassword(){
+		$this->setPassword($this->getScrambledPassword($this->getPassword()));
+	}
 	
 }
 ?>

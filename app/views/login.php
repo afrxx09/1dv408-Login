@@ -5,7 +5,13 @@ namespace view;
 class LoginView extends \View{
 	
 	const EmptyUserName = 'Username can not be empty!';
+	const NotAllowedCharsUsername = 'Detected unallowed special characters in username. (allowed characters: a-z, A-Z, 0-9)';
+	const UsernameLengthError = 'Username must be between 4 and 20 characters';
+	
 	const EmptyPassword = 'Password can not be empty!';
+	const NotAllowedCharsPassword = 'Detected unallowed special characters in username. (allowed characters: a-z, A-Z, 0-9)';
+	const PasswordLengthError = 'Username must be between 4 and 20 characters';
+	
 	const SignInSuccess = 'Sign in successful!';
 	const SignOutSuccess = 'Sign out successfull';
 	const AuthFail = 'Incorrect Username or password.';
@@ -18,8 +24,7 @@ class LoginView extends \View{
 	
 	private $loginModel;
 	
-	//private $intCookieTime = 2592000; //60*60*24*30 = 30 days
-	private $intCookieTime = 20; //60*60*24*30 = 30 days
+	private $intCookieTime = 2592000; //60*60*24*30 = 30 days
 	private $strCookieName = 'auth';
 	
 	public function __construct($loginModel){
@@ -33,11 +38,31 @@ class LoginView extends \View{
 	}
 
 	public function getSignInUserName(){
-		return isset($_POST['username']) ? $_POST['username'] : '';
+		if(!isset($_POST['username']) || $_POST['username'] === ''){
+			throw new \Exception(self::EmptyUserName);
+		}
+		$strUsername = trim($_POST['username']);
+		if(preg_match('/[^a-z0-9]/i', $strUsername)){
+			throw new \Exception(self::NotAllowedCharsUsername);
+		}
+		if(strlen($strUsername) < 4 || strlen($strUsername) > 20){
+			throw new \Exception(self::UsernameLengthError);
+		}
+		return $strUsername;
 	}
 
 	public function getSignInPassword(){
-		return isset($_POST['password']) ? $_POST['password'] : '';
+		if(!isset($_POST['password']) || $_POST['password'] === ''){
+			throw new \Exception(self::EmptyPassword);
+		}
+		$strPassword = trim($_POST['password']);
+		if(preg_match('/[^a-z0-9]/i', $strPassword)){
+			throw new \Exception(self::NotAllowedCharsPassword);
+		}
+		if(strlen($strPassword) < 4 || strlen($strPassword) > 20){
+			throw new \Exception(self::PasswordLengthError);
+		}
+		return $strPassword;
 	}
 
 	public function getKeepMeLoggedIn(){

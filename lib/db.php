@@ -13,7 +13,7 @@ class db{
 
 	public function query($strSql){
 		$con = $this->connect();
-		$result = $con->query($strSql) or trigger_error("Query Failed! SQL: $sql - Error: ".mysqli_error(), E_USER_ERROR);;
+		$result = $con->query($strSql);
 		if($result === false){
 			$this->addError($strSql);
 			return false;
