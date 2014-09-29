@@ -105,7 +105,7 @@ class LoginController extends \Controller{
 			$this->redirectTo('Login');
 		}
 		else{
-			$this->view->render($this->view->successPage());
+			$this->view->render($this->view->success());
 		}
 	}
 	
@@ -159,7 +159,7 @@ class LoginController extends \Controller{
 			if($strCurrentVisitorIdentifier === $strCookieIdentifier){
 				//Check in database on user when cookie was created, add the amount of time the view saves cookies.(time cookie was created + 30 days)
 				//If the time right now is less than that(time created + 30 days) it's presumed that the cookie expire date has been tampered with
-				if(!($user->getCookieTime() + $this->view->getAuthCookieTime()) > time()){
+				if(($user->getCookieTime() + $this->view->getAuthCookieTime()) > time()){
 					$this->loginModel->createLoginSession($user->getToken());
 					return true;
 				}

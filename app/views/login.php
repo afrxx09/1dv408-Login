@@ -109,7 +109,7 @@ class LoginView extends \View{
 	public function createAuthCookie($user){
 		$strCookieContent = $this->loginModel->generateCookieContent($user);
 		$intCookieTime = $user->getCookieTime() + $this->intCookieTime;
-		setcookie($this->strCookieName, $strCookieContent, $intCookieTime, '/');
+		setcookie($this->strCookieName, $strCookieContent, time() + $this->intCookieTime, '/');
 		$this->addFlash(self::CookieCreated, self::FlashClassWarning);
 	}
 	
@@ -147,7 +147,7 @@ class LoginView extends \View{
 			<h2>Not signed in</h2>
 			' . $this->RenderFlash() .'
 			<div id="SignInForm">
-				<form method="post" action="' . ROOT_PATH . 'Login/CreateSession">
+				<form method="post" action="' . ROOT_PATH . 'Login/Create">
 					<div class="form-row">
 						<label for="username">Username</label>
 						<input type="text" name="username" id="username" />
@@ -180,7 +180,7 @@ class LoginView extends \View{
 			' . $this->RenderFlash() .'
 			<div>
 				<p>Page for logged in users.</p>
-				<p><a href="' . ROOT_PATH . 'Login/DestroySession">Sign out</a></p>
+				<p><a href="' . ROOT_PATH . 'Login/Destroy">Sign out</a></p>
 			</div>
 			' . $this->renderDateTimeString() . '
 		';
